@@ -36,6 +36,7 @@ module.exports = {
     },
     "gatsby-plugin-typescript-checker",
     "gatsby-plugin-eslint",
+    "gatsby-plugin-styled-components",
     // this (optional) plugin enables Progressive Web App + Offline functionality
     // To learn more, visit: https://gatsby.dev/offline
     // `gatsby-plugin-offline`,
