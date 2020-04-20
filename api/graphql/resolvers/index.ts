@@ -1,10 +1,4 @@
-import {
-  QueryResolvers,
-  MenuResult,
-  MenuItem,
-  Order,
-  User,
-} from "../generated/types"
+import { QueryResolvers, Menu, MenuItem, Order, User } from "../generated/types"
 import { IResolvers } from "apollo-server-azure-functions"
 import { menuItems, orders, users } from "../../mock-data"
 
@@ -16,7 +10,7 @@ const itemsPerPage = 5
 
 const resolvers: Resolvers = {
   Query: {
-    menu(_, { page }): MenuResult {
+    menu(_, { page }): Menu {
       const items = menuItems.slice(
         itemsPerPage * page,
         itemsPerPage * page + itemsPerPage

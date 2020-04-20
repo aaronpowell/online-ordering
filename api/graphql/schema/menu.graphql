@@ -10,7 +10,7 @@ type MenuItem {
   picture: String
 }
 
-type MenuResult {
+type Menu {
   items: [MenuItem!]
   page: Int!
   totalPages: Int!

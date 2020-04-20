@@ -19,6 +19,13 @@ export type Address = {
   postcode: Scalars["String"]
 }
 
+export type Menu = {
+  __typename?: "Menu"
+  items?: Maybe<Array<MenuItem>>
+  page: Scalars["Int"]
+  totalPages: Scalars["Int"]
+}
+
 export type MenuItem = {
   __typename?: "MenuItem"
   description: Scalars["String"]
@@ -30,13 +37,6 @@ export type MenuItem = {
   picture?: Maybe<Scalars["String"]>
   price: Scalars["Float"]
   vegetarian: Scalars["Boolean"]
-}
-
-export type MenuResult = {
-  __typename?: "MenuResult"
-  items?: Maybe<Array<MenuItem>>
-  page: Scalars["Int"]
-  totalPages: Scalars["Int"]
 }
 
 export type Order = {
@@ -64,7 +64,7 @@ export enum OrderState {
 
 export type Query = {
   __typename?: "Query"
-  menu: MenuResult
+  menu: Menu
   menuItem?: Maybe<MenuItem>
   order?: Maybe<Order>
   orders: Array<Order>
