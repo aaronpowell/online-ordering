@@ -1,0 +1,17 @@
+type MenuItem {
+  id: ID!
+  name: String!
+  description: String!
+  price: Float!
+  glutenFree: Boolean!
+  vegetarian: Boolean!
+  notes: String
+  ingredients: [String!]!
+  picture: String
+}
+
+type MenuResult {
+  items: [MenuItem!]
+  page: Int!
+  totalPages: Int!
+}

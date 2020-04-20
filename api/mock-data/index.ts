@@ -1,4 +1,5 @@
 import { menuItems } from "./menu"
 import { orders } from "./order"
+import { users } from "./user"
 
-export { menuItems, orders }
+export { menuItems, orders, users }

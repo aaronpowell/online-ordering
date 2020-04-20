@@ -1,0 +1,43 @@
+# import User from "user.graphql"
+# import MenuItem from "menu.graphql"
+
+type OrderItem {
+  quantity: Int!
+  item: MenuItem!
+}
+
+enum OrderState {
+  Placed
+  Preparing
+  Ready
+  Complete
+}
+
+type Order {
+  id: ID!
+  items: [OrderItem!]!
+  state: OrderState!
+  price: Float!
+  date: DateTime
+  orderer: User!
+}
+
+query findOrdersForUser($userId: ID!) {
+  orders(userId: $userId) {
+    ...OrderFields
+  }
+}
+
+fragment OrderFields on Order {
+  id
+  items {
+    quantity
+    item {
+      name
+      price
+    }
+  }
+  state
+  price
+  date
+}

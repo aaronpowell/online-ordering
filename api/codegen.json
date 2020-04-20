@@ -1,16 +1,36 @@
 {
   "overwrite": true,
-  "schema": "./graphql/schema.ts",
-  "documents": null,
+  "schema": "./graphql/schema.graphql",
+  "documents": "./graphql/schema/**/*.graphql",
   "generates": {
-    "./graphql/generated-types.ts": {
-      "plugins": ["typescript", "typescript-resolvers"],
+    "./graphql/generated/types.ts": {
+      "plugins": [
+        "typescript",
+        "typescript-resolvers",
+        "typescript-operations"
+      ],
       "config": {
         "scalars": {
           "DateTime": "Date"
-        }
+        },
+        "avoidOptionals": true
       }
     },
-    "./graphql/graphql.schema.json": { "plugins": ["introspection"] }
+    "./graphql/generated/graphql.schema.json": { "plugins": ["introspection"] },
+    "../src/graphql/generated.tsx": {
+      "plugins": [
+        "typescript",
+        "typescript-react-apollo",
+        "typescript-operations"
+      ],
+      "config": {
+        "scalars": {
+          "DateTime": "Date"
+        },
+        "withHooks": true,
+        "withHOC": false,
+        "withComponent": false
+      }
+    }
   }
 }

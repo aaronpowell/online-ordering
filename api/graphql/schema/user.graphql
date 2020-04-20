@@ -1,0 +1,12 @@
+type User {
+  id: ID!
+  email: String!
+  name: String!
+  address: Address
+}
+
+type Address {
+  address: String!
+  state: String!
+  postcode: String!
+}

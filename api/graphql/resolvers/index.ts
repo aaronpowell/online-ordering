@@ -1,6 +1,12 @@
-import { QueryResolvers, MenuResult, MenuItem, Order } from "./generated-types"
+import {
+  QueryResolvers,
+  MenuResult,
+  MenuItem,
+  Order,
+  User,
+} from "../generated/types"
 import { IResolvers } from "apollo-server-azure-functions"
-import { menuItems, orders } from "../mock-data"
+import { menuItems, orders, users } from "../../mock-data"
 
 interface Resolvers extends IResolvers {
   Query: QueryResolvers
@@ -26,12 +32,14 @@ const resolvers: Resolvers = {
       return menuItems.find(items => items.id === id)
     },
 
-    findOrder(_, { id }): Order {
+    order(_, { id }): Order {
       return orders.find(order => order.id === id)
     },
-
-    findOrdersForUser(_, { userId }): Order[] {
+    orders(_, { userId }): Order[] {
       return orders.filter(order => order.orderer.id === userId)
+    },
+    user(_, { id }): User {
+      return users.find(user => user.id === id)
     },
   },
 }

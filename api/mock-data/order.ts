@@ -1,4 +1,4 @@
-import { Order, OrderState } from "../graphql/generated-types"
+import { Order, OrderState } from "../graphql/generated/types"
 import { aaron, jane } from "./user"
 import { menuItems } from "./menu"
 
@@ -14,6 +14,7 @@ const orders: Order[] = [
     ],
     price: menuItems[0].price,
     state: OrderState.Placed,
+    date: new Date(),
   },
   {
     id: "2",
@@ -30,6 +31,7 @@ const orders: Order[] = [
     ],
     price: menuItems[2].price + menuItems[5].price,
     state: OrderState.Placed,
+    date: new Date(),
   },
   {
     id: "3",
@@ -54,6 +56,7 @@ const orders: Order[] = [
     ],
     price: menuItems[0].price,
     state: OrderState.Complete,
+    date: new Date(),
   },
 ]
 

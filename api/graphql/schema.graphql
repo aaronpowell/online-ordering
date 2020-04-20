@@ -1,0 +1,17 @@
+# import User from "./schema/user.graphql"
+# import Order from "./schema/order.graphql"
+# import * from "./schema/menu.graphql"
+
+scalar DateTime
+
+schema {
+  query: Query
+}
+
+type Query {
+  menu(page: Int = 0): MenuResult!
+  menuItem(id: ID!): MenuItem
+  order(id: ID!): Order
+  user(id: ID!): User
+  orders(userId: ID!): [Order!]!
+}

@@ -1,4 +1,4 @@
-import { MenuItem } from "../graphql/generated-types"
+import { MenuItem } from "../graphql/generated/types"
 
 const menuItems: MenuItem[] = [
   {
@@ -9,6 +9,8 @@ const menuItems: MenuItem[] = [
     glutenFree: true,
     vegetarian: true,
     ingredients: ["coffee", "milk"],
+    notes: null,
+    picture: null,
   },
   {
     id: "2",
@@ -18,6 +20,8 @@ const menuItems: MenuItem[] = [
     glutenFree: true,
     vegetarian: true,
     ingredients: ["coffee", "milk"],
+    notes: null,
+    picture: null,
   },
   {
     id: "3",
@@ -27,6 +31,8 @@ const menuItems: MenuItem[] = [
     glutenFree: true,
     vegetarian: true,
     ingredients: ["coffee"],
+    notes: null,
+    picture: null,
   },
   {
     id: "4",
@@ -36,6 +42,8 @@ const menuItems: MenuItem[] = [
     glutenFree: true,
     vegetarian: true,
     ingredients: ["coffee"],
+    notes: null,
+    picture: null,
   },
   {
     id: "5",
@@ -45,6 +53,8 @@ const menuItems: MenuItem[] = [
     glutenFree: false,
     vegetarian: true,
     ingredients: ["flour", "blueberries"],
+    notes: null,
+    picture: null,
   },
   {
     id: "6",
@@ -54,6 +64,8 @@ const menuItems: MenuItem[] = [
     glutenFree: false,
     vegetarian: true,
     ingredients: ["flour", "oats"],
+    notes: null,
+    picture: null,
   },
   {
     id: "7",
@@ -63,6 +75,8 @@ const menuItems: MenuItem[] = [
     glutenFree: false,
     vegetarian: true,
     ingredients: ["flour", "butter"],
+    notes: null,
+    picture: null,
   },
   {
     id: "8",
@@ -72,6 +86,8 @@ const menuItems: MenuItem[] = [
     glutenFree: false,
     vegetarian: false,
     ingredients: ["flour", "butter", "ham", "cheese"],
+    notes: null,
+    picture: null,
   },
   {
     id: "9",
@@ -81,6 +97,8 @@ const menuItems: MenuItem[] = [
     glutenFree: false,
     vegetarian: true,
     ingredients: ["flour", "butter", "marmalade"],
+    notes: null,
+    picture: null,
   },
   {
     id: "10",
@@ -90,6 +108,8 @@ const menuItems: MenuItem[] = [
     glutenFree: true,
     vegetarian: true,
     ingredients: ["gluten free bread", "marmalade"],
+    notes: null,
+    picture: null,
   },
 ]
 

@@ -27,32 +27,32 @@ export type Address = {
 
 export type MenuItem = {
   __typename?: "MenuItem"
-  id: Scalars["ID"]
-  name: Scalars["String"]
   description: Scalars["String"]
-  price: Scalars["Float"]
   glutenFree: Scalars["Boolean"]
-  vegetarian: Scalars["Boolean"]
-  notes?: Maybe<Scalars["String"]>
+  id: Scalars["ID"]
   ingredients: Array<Scalars["String"]>
-  picture?: Maybe<Scalars["String"]>
+  name: Scalars["String"]
+  notes: Maybe<Scalars["String"]>
+  picture: Maybe<Scalars["String"]>
+  price: Scalars["Float"]
+  vegetarian: Scalars["Boolean"]
 }
 
 export type MenuResult = {
   __typename?: "MenuResult"
-  items?: Maybe<Array<MenuItem>>
+  items: Maybe<Array<MenuItem>>
   page: Scalars["Int"]
   totalPages: Scalars["Int"]
 }
 
 export type Order = {
   __typename?: "Order"
+  date: Maybe<Scalars["DateTime"]>
   id: Scalars["ID"]
   items: Array<OrderItem>
-  state: OrderState
-  price: Scalars["Float"]
-  date?: Maybe<Scalars["DateTime"]>
   orderer: User
+  price: Scalars["Float"]
+  state: OrderState
 }
 
 export type OrderItem = {
@@ -71,9 +71,10 @@ export enum OrderState {
 export type Query = {
   __typename?: "Query"
   menu: MenuResult
-  menuItem?: Maybe<MenuItem>
-  findOrder?: Maybe<Order>
-  findOrdersForUser: Array<Order>
+  menuItem: Maybe<MenuItem>
+  order: Maybe<Order>
+  orders: Array<Order>
+  user: Maybe<User>
 }
 
 export type QueryMenuArgs = {
@@ -81,23 +82,27 @@ export type QueryMenuArgs = {
 }
 
 export type QueryMenuItemArgs = {
-  id?: Maybe<Scalars["ID"]>
+  id: Scalars["ID"]
 }
 
-export type QueryFindOrderArgs = {
-  id?: Maybe<Scalars["ID"]>
+export type QueryOrderArgs = {
+  id: Scalars["ID"]
 }
 
-export type QueryFindOrdersForUserArgs = {
-  userId?: Maybe<Scalars["ID"]>
+export type QueryOrdersArgs = {
+  userId: Scalars["ID"]
+}
+
+export type QueryUserArgs = {
+  id: Scalars["ID"]
 }
 
 export type User = {
   __typename?: "User"
-  id: Scalars["ID"]
+  address: Maybe<Address>
   email: Scalars["String"]
+  id: Scalars["ID"]
   name: Scalars["String"]
-  address?: Maybe<Address>
 }
 
 export type ResolverTypeWrapper<T> = Promise<T> | T
@@ -212,16 +217,16 @@ export type ResolversTypes = {
   Int: ResolverTypeWrapper<Scalars["Int"]>
   MenuResult: ResolverTypeWrapper<MenuResult>
   MenuItem: ResolverTypeWrapper<MenuItem>
-  ID: ResolverTypeWrapper<Scalars["ID"]>
   String: ResolverTypeWrapper<Scalars["String"]>
-  Float: ResolverTypeWrapper<Scalars["Float"]>
   Boolean: ResolverTypeWrapper<Scalars["Boolean"]>
+  ID: ResolverTypeWrapper<Scalars["ID"]>
+  Float: ResolverTypeWrapper<Scalars["Float"]>
   Order: ResolverTypeWrapper<Order>
-  OrderItem: ResolverTypeWrapper<OrderItem>
-  OrderState: OrderState
   DateTime: ResolverTypeWrapper<Scalars["DateTime"]>
+  OrderItem: ResolverTypeWrapper<OrderItem>
   User: ResolverTypeWrapper<User>
   Address: ResolverTypeWrapper<Address>
+  OrderState: OrderState
 }
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -230,25 +235,25 @@ export type ResolversParentTypes = {
   Int: Scalars["Int"]
   MenuResult: MenuResult
   MenuItem: MenuItem
-  ID: Scalars["ID"]
   String: Scalars["String"]
-  Float: Scalars["Float"]
   Boolean: Scalars["Boolean"]
+  ID: Scalars["ID"]
+  Float: Scalars["Float"]
   Order: Order
-  OrderItem: OrderItem
-  OrderState: OrderState
   DateTime: Scalars["DateTime"]
+  OrderItem: OrderItem
   User: User
   Address: Address
+  OrderState: OrderState
 }
 
 export type AddressResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes["Address"] = ResolversParentTypes["Address"]
 > = {
-  address?: Resolver<ResolversTypes["String"], ParentType, ContextType>
-  state?: Resolver<ResolversTypes["String"], ParentType, ContextType>
-  postcode?: Resolver<ResolversTypes["String"], ParentType, ContextType>
+  address: Resolver<ResolversTypes["String"], ParentType, ContextType>
+  state: Resolver<ResolversTypes["String"], ParentType, ContextType>
+  postcode: Resolver<ResolversTypes["String"], ParentType, ContextType>
   __isTypeOf?: isTypeOfResolverFn<ParentType>
 }
 
@@ -261,19 +266,19 @@ export type MenuItemResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes["MenuItem"] = ResolversParentTypes["MenuItem"]
 > = {
-  id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>
-  name?: Resolver<ResolversTypes["String"], ParentType, ContextType>
-  description?: Resolver<ResolversTypes["String"], ParentType, ContextType>
-  price?: Resolver<ResolversTypes["Float"], ParentType, ContextType>
-  glutenFree?: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>
-  vegetarian?: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>
-  notes?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>
-  ingredients?: Resolver<
+  description: Resolver<ResolversTypes["String"], ParentType, ContextType>
+  glutenFree: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>
+  id: Resolver<ResolversTypes["ID"], ParentType, ContextType>
+  ingredients: Resolver<
     Array<ResolversTypes["String"]>,
     ParentType,
     ContextType
   >
-  picture?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>
+  name: Resolver<ResolversTypes["String"], ParentType, ContextType>
+  notes: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>
+  picture: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>
+  price: Resolver<ResolversTypes["Float"], ParentType, ContextType>
+  vegetarian: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>
   __isTypeOf?: isTypeOfResolverFn<ParentType>
 }
 
@@ -281,13 +286,13 @@ export type MenuResultResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes["MenuResult"] = ResolversParentTypes["MenuResult"]
 > = {
-  items?: Resolver<
+  items: Resolver<
     Maybe<Array<ResolversTypes["MenuItem"]>>,
     ParentType,
     ContextType
   >
-  page?: Resolver<ResolversTypes["Int"], ParentType, ContextType>
-  totalPages?: Resolver<ResolversTypes["Int"], ParentType, ContextType>
+  page: Resolver<ResolversTypes["Int"], ParentType, ContextType>
+  totalPages: Resolver<ResolversTypes["Int"], ParentType, ContextType>
   __isTypeOf?: isTypeOfResolverFn<ParentType>
 }
 
@@ -295,12 +300,12 @@ export type OrderResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes["Order"] = ResolversParentTypes["Order"]
 > = {
-  id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>
-  items?: Resolver<Array<ResolversTypes["OrderItem"]>, ParentType, ContextType>
-  state?: Resolver<ResolversTypes["OrderState"], ParentType, ContextType>
-  price?: Resolver<ResolversTypes["Float"], ParentType, ContextType>
-  date?: Resolver<Maybe<ResolversTypes["DateTime"]>, ParentType, ContextType>
-  orderer?: Resolver<ResolversTypes["User"], ParentType, ContextType>
+  date: Resolver<Maybe<ResolversTypes["DateTime"]>, ParentType, ContextType>
+  id: Resolver<ResolversTypes["ID"], ParentType, ContextType>
+  items: Resolver<Array<ResolversTypes["OrderItem"]>, ParentType, ContextType>
+  orderer: Resolver<ResolversTypes["User"], ParentType, ContextType>
+  price: Resolver<ResolversTypes["Float"], ParentType, ContextType>
+  state: Resolver<ResolversTypes["OrderState"], ParentType, ContextType>
   __isTypeOf?: isTypeOfResolverFn<ParentType>
 }
 
@@ -308,8 +313,8 @@ export type OrderItemResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes["OrderItem"] = ResolversParentTypes["OrderItem"]
 > = {
-  quantity?: Resolver<ResolversTypes["Int"], ParentType, ContextType>
-  item?: Resolver<ResolversTypes["MenuItem"], ParentType, ContextType>
+  quantity: Resolver<ResolversTypes["Int"], ParentType, ContextType>
+  item: Resolver<ResolversTypes["MenuItem"], ParentType, ContextType>
   __isTypeOf?: isTypeOfResolverFn<ParentType>
 }
 
@@ -317,29 +322,35 @@ export type QueryResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes["Query"] = ResolversParentTypes["Query"]
 > = {
-  menu?: Resolver<
+  menu: Resolver<
     ResolversTypes["MenuResult"],
     ParentType,
     ContextType,
     RequireFields<QueryMenuArgs, "page">
   >
-  menuItem?: Resolver<
+  menuItem: Resolver<
     Maybe<ResolversTypes["MenuItem"]>,
     ParentType,
     ContextType,
-    RequireFields<QueryMenuItemArgs, never>
+    RequireFields<QueryMenuItemArgs, "id">
   >
-  findOrder?: Resolver<
+  order: Resolver<
     Maybe<ResolversTypes["Order"]>,
     ParentType,
     ContextType,
-    RequireFields<QueryFindOrderArgs, never>
+    RequireFields<QueryOrderArgs, "id">
   >
-  findOrdersForUser?: Resolver<
+  orders: Resolver<
     Array<ResolversTypes["Order"]>,
     ParentType,
     ContextType,
-    RequireFields<QueryFindOrdersForUserArgs, never>
+    RequireFields<QueryOrdersArgs, "userId">
+  >
+  user: Resolver<
+    Maybe<ResolversTypes["User"]>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryUserArgs, "id">
   >
 }
 
@@ -347,22 +358,22 @@ export type UserResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes["User"] = ResolversParentTypes["User"]
 > = {
-  id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>
-  email?: Resolver<ResolversTypes["String"], ParentType, ContextType>
-  name?: Resolver<ResolversTypes["String"], ParentType, ContextType>
-  address?: Resolver<Maybe<ResolversTypes["Address"]>, ParentType, ContextType>
+  address: Resolver<Maybe<ResolversTypes["Address"]>, ParentType, ContextType>
+  email: Resolver<ResolversTypes["String"], ParentType, ContextType>
+  id: Resolver<ResolversTypes["ID"], ParentType, ContextType>
+  name: Resolver<ResolversTypes["String"], ParentType, ContextType>
   __isTypeOf?: isTypeOfResolverFn<ParentType>
 }
 
 export type Resolvers<ContextType = any> = {
-  Address?: AddressResolvers<ContextType>
-  DateTime?: GraphQLScalarType
-  MenuItem?: MenuItemResolvers<ContextType>
-  MenuResult?: MenuResultResolvers<ContextType>
-  Order?: OrderResolvers<ContextType>
-  OrderItem?: OrderItemResolvers<ContextType>
-  Query?: QueryResolvers<ContextType>
-  User?: UserResolvers<ContextType>
+  Address: AddressResolvers<ContextType>
+  DateTime: GraphQLScalarType
+  MenuItem: MenuItemResolvers<ContextType>
+  MenuResult: MenuResultResolvers<ContextType>
+  Order: OrderResolvers<ContextType>
+  OrderItem: OrderItemResolvers<ContextType>
+  Query: QueryResolvers<ContextType>
+  User: UserResolvers<ContextType>
 }
 
 /**
@@ -370,3 +381,22 @@ export type Resolvers<ContextType = any> = {
  * Use "Resolvers" root object instead. If you wish to get "IResolvers", add "typesPrefix: I" to your config.
  */
 export type IResolvers<ContextType = any> = Resolvers<ContextType>
+
+export type FindOrdersForUserQueryVariables = {
+  userId: Scalars["ID"]
+}
+
+export type FindOrdersForUserQuery = { __typename?: "Query" } & {
+  orders: Array<{ __typename?: "Order" } & OrderFieldsFragment>
+}
+
+export type OrderFieldsFragment = { __typename?: "Order" } & Pick<
+  Order,
+  "id" | "state" | "price" | "date"
+> & {
+    items: Array<
+      { __typename?: "OrderItem" } & Pick<OrderItem, "quantity"> & {
+          item: { __typename?: "MenuItem" } & Pick<MenuItem, "name" | "price">
+        }
+    >
+  }
