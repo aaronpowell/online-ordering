@@ -10,8 +10,18 @@ type MenuItem {
   picture: String
 }
 
-type Menu {
-  items: [MenuItem!]
-  page: Int!
-  totalPages: Int!
+query getMenuItems($offset: Int) {
+  menu(offset: $offset) {
+    ...MenuItemFragment
+  }
+}
+
+fragment MenuItemFragment on MenuItem {
+  id
+  name
+  description
+  price
+  glutenFree
+  vegetarian
+  picture
 }

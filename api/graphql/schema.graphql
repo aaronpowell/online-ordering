@@ -9,7 +9,7 @@ schema {
 }
 
 type Query {
-  menu(page: Int = 0): Menu!
+  menu(offset: Int = 0): [MenuItem!]
   menuItem(id: ID!): MenuItem
   order(id: ID!): Order
   user(id: ID!): User

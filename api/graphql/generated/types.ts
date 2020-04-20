@@ -25,13 +25,6 @@ export type Address = {
   postcode: Scalars["String"]
 }
 
-export type Menu = {
-  __typename?: "Menu"
-  items: Maybe<Array<MenuItem>>
-  page: Scalars["Int"]
-  totalPages: Scalars["Int"]
-}
-
 export type MenuItem = {
   __typename?: "MenuItem"
   description: Scalars["String"]
@@ -70,7 +63,7 @@ export enum OrderState {
 
 export type Query = {
   __typename?: "Query"
-  menu: Menu
+  menu: Maybe<Array<MenuItem>>
   menuItem: Maybe<MenuItem>
   order: Maybe<Order>
   orders: Array<Order>
@@ -78,7 +71,7 @@ export type Query = {
 }
 
 export type QueryMenuArgs = {
-  page?: Maybe<Scalars["Int"]>
+  offset?: Maybe<Scalars["Int"]>
 }
 
 export type QueryMenuItemArgs = {
@@ -215,7 +208,6 @@ export type DirectiveResolverFn<
 export type ResolversTypes = {
   Query: ResolverTypeWrapper<{}>
   Int: ResolverTypeWrapper<Scalars["Int"]>
-  Menu: ResolverTypeWrapper<Menu>
   MenuItem: ResolverTypeWrapper<MenuItem>
   String: ResolverTypeWrapper<Scalars["String"]>
   Boolean: ResolverTypeWrapper<Scalars["Boolean"]>
@@ -233,7 +225,6 @@ export type ResolversTypes = {
 export type ResolversParentTypes = {
   Query: {}
   Int: Scalars["Int"]
-  Menu: Menu
   MenuItem: MenuItem
   String: Scalars["String"]
   Boolean: Scalars["Boolean"]
@@ -260,20 +251,6 @@ export type AddressResolvers<
 export interface DateTimeScalarConfig
   extends GraphQLScalarTypeConfig<ResolversTypes["DateTime"], any> {
   name: "DateTime"
-}
-
-export type MenuResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes["Menu"] = ResolversParentTypes["Menu"]
-> = {
-  items: Resolver<
-    Maybe<Array<ResolversTypes["MenuItem"]>>,
-    ParentType,
-    ContextType
-  >
-  page: Resolver<ResolversTypes["Int"], ParentType, ContextType>
-  totalPages: Resolver<ResolversTypes["Int"], ParentType, ContextType>
-  __isTypeOf?: isTypeOfResolverFn<ParentType>
 }
 
 export type MenuItemResolvers<
@@ -323,10 +300,10 @@ export type QueryResolvers<
   ParentType extends ResolversParentTypes["Query"] = ResolversParentTypes["Query"]
 > = {
   menu: Resolver<
-    ResolversTypes["Menu"],
+    Maybe<Array<ResolversTypes["MenuItem"]>>,
     ParentType,
     ContextType,
-    RequireFields<QueryMenuArgs, "page">
+    RequireFields<QueryMenuArgs, "offset">
   >
   menuItem: Resolver<
     Maybe<ResolversTypes["MenuItem"]>,
@@ -368,7 +345,6 @@ export type UserResolvers<
 export type Resolvers<ContextType = any> = {
   Address: AddressResolvers<ContextType>
   DateTime: GraphQLScalarType
-  Menu: MenuResolvers<ContextType>
   MenuItem: MenuItemResolvers<ContextType>
   Order: OrderResolvers<ContextType>
   OrderItem: OrderItemResolvers<ContextType>
@@ -381,6 +357,25 @@ export type Resolvers<ContextType = any> = {
  * Use "Resolvers" root object instead. If you wish to get "IResolvers", add "typesPrefix: I" to your config.
  */
 export type IResolvers<ContextType = any> = Resolvers<ContextType>
+
+export type GetMenuItemsQueryVariables = {
+  offset: Maybe<Scalars["Int"]>
+}
+
+export type GetMenuItemsQuery = { __typename?: "Query" } & {
+  menu: Maybe<Array<{ __typename?: "MenuItem" } & MenuItemFragmentFragment>>
+}
+
+export type MenuItemFragmentFragment = { __typename?: "MenuItem" } & Pick<
+  MenuItem,
+  | "id"
+  | "name"
+  | "description"
+  | "price"
+  | "glutenFree"
+  | "vegetarian"
+  | "picture"
+>
 
 export type FindOrdersForUserQueryVariables = {
   userId: Scalars["ID"]

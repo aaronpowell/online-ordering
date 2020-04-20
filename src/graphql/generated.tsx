@@ -19,13 +19,6 @@ export type Address = {
   postcode: Scalars["String"]
 }
 
-export type Menu = {
-  __typename?: "Menu"
-  items?: Maybe<Array<MenuItem>>
-  page: Scalars["Int"]
-  totalPages: Scalars["Int"]
-}
-
 export type MenuItem = {
   __typename?: "MenuItem"
   description: Scalars["String"]
@@ -64,7 +57,7 @@ export enum OrderState {
 
 export type Query = {
   __typename?: "Query"
-  menu: Menu
+  menu?: Maybe<Array<MenuItem>>
   menuItem?: Maybe<MenuItem>
   order?: Maybe<Order>
   orders: Array<Order>
@@ -72,7 +65,7 @@ export type Query = {
 }
 
 export type QueryMenuArgs = {
-  page?: Maybe<Scalars["Int"]>
+  offset?: Maybe<Scalars["Int"]>
 }
 
 export type QueryMenuItemArgs = {
@@ -99,6 +92,17 @@ export type User = {
   name: Scalars["String"]
 }
 
+export const MenuItemFragmentFragmentDoc = gql`
+  fragment MenuItemFragment on MenuItem {
+    id
+    name
+    description
+    price
+    glutenFree
+    vegetarian
+    picture
+  }
+`
 export const OrderFieldsFragmentDoc = gql`
   fragment OrderFields on Order {
     id
@@ -114,6 +118,63 @@ export const OrderFieldsFragmentDoc = gql`
     date
   }
 `
+export const GetMenuItemsDocument = gql`
+  query getMenuItems($offset: Int) {
+    menu(offset: $offset) {
+      ...MenuItemFragment
+    }
+  }
+  ${MenuItemFragmentFragmentDoc}
+`
+
+/**
+ * __useGetMenuItemsQuery__
+ *
+ * To run a query within a React component, call `useGetMenuItemsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMenuItemsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMenuItemsQuery({
+ *   variables: {
+ *      offset: // value for 'offset'
+ *   },
+ * });
+ */
+export function useGetMenuItemsQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    GetMenuItemsQuery,
+    GetMenuItemsQueryVariables
+  >
+) {
+  return ApolloReactHooks.useQuery<
+    GetMenuItemsQuery,
+    GetMenuItemsQueryVariables
+  >(GetMenuItemsDocument, baseOptions)
+}
+export function useGetMenuItemsLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    GetMenuItemsQuery,
+    GetMenuItemsQueryVariables
+  >
+) {
+  return ApolloReactHooks.useLazyQuery<
+    GetMenuItemsQuery,
+    GetMenuItemsQueryVariables
+  >(GetMenuItemsDocument, baseOptions)
+}
+export type GetMenuItemsQueryHookResult = ReturnType<
+  typeof useGetMenuItemsQuery
+>
+export type GetMenuItemsLazyQueryHookResult = ReturnType<
+  typeof useGetMenuItemsLazyQuery
+>
+export type GetMenuItemsQueryResult = ApolloReactCommon.QueryResult<
+  GetMenuItemsQuery,
+  GetMenuItemsQueryVariables
+>
 export const FindOrdersForUserDocument = gql`
   query findOrdersForUser($userId: ID!) {
     orders(userId: $userId) {
@@ -171,6 +232,25 @@ export type FindOrdersForUserQueryResult = ApolloReactCommon.QueryResult<
   FindOrdersForUserQuery,
   FindOrdersForUserQueryVariables
 >
+export type GetMenuItemsQueryVariables = {
+  offset?: Maybe<Scalars["Int"]>
+}
+
+export type GetMenuItemsQuery = { __typename?: "Query" } & {
+  menu?: Maybe<Array<{ __typename?: "MenuItem" } & MenuItemFragmentFragment>>
+}
+
+export type MenuItemFragmentFragment = { __typename?: "MenuItem" } & Pick<
+  MenuItem,
+  | "id"
+  | "name"
+  | "description"
+  | "price"
+  | "glutenFree"
+  | "vegetarian"
+  | "picture"
+>
+
 export type FindOrdersForUserQueryVariables = {
   userId: Scalars["ID"]
 }

@@ -1,6 +1,6 @@
 import React from "react"
 import ApolloClient from "apollo-boost"
-import { useFindOrdersForUserQuery } from "../graphql/generated"
+import { useGetMenuItemsQuery } from "../graphql/generated"
 
 const client = new ApolloClient({
   uri: `${process.env.GATSBY_BACKEND_URI || ""}/api/graphql`,
@@ -10,14 +10,29 @@ import Layout from "../components/layout"
 import SEO from "../components/seo"
 
 const IndexPage: React.FC = () => {
-  const { data, loading } = useFindOrdersForUserQuery({
+  const { data, loading, fetchMore } = useGetMenuItemsQuery({
     client,
-    variables: {
-      userId: "aaronpowell",
-    },
   })
 
   console.log({ data, loading })
+
+  if (data?.menu) {
+    setTimeout(() => {
+      fetchMore({
+        variables: {
+          offset: data.menu?.length,
+        },
+        updateQuery: (prev, { fetchMoreResult }) => {
+          if (!fetchMoreResult) {
+            return prev
+          }
+          return Object.assign({}, prev, {
+            menu: fetchMoreResult.menu,
+          })
+        },
+      })
+    }, 1000)
+  }
 
   return (
     <Layout>
