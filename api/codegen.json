@@ -32,5 +32,8 @@
         "withComponent": false
       }
     }
+  },
+  "hooks": {
+    "afterAllFileWrite": "npx prettier --write"
   }
 }
