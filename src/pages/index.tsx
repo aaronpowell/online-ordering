@@ -1,44 +1,50 @@
-import React from "react"
+import React, { useState } from "react"
 import ApolloClient from "apollo-boost"
 import { useGetMenuItemsQuery } from "../graphql/generated"
+import Layout from "../components/layout"
+import SEO from "../components/seo"
+import Loader from "../components/loader"
+import Menu from "../components/menu"
 
 const client = new ApolloClient({
   uri: `${process.env.GATSBY_BACKEND_URI || ""}/api/graphql`,
 })
 
-import Layout from "../components/layout"
-import SEO from "../components/seo"
-import Loader from "../components/loader"
-
 const IndexPage: React.FC = () => {
   const { data, loading, fetchMore } = useGetMenuItemsQuery({
     client,
   })
+  const [hasMore, setHasMore] = useState(true)
 
-  console.log({ data, loading })
+  const loadMore = (offset: number): void => {
+    fetchMore({
+      variables: {
+        offset,
+      },
+      updateQuery: (prev, { fetchMoreResult }) => {
+        if (!fetchMoreResult || !fetchMoreResult.menu) {
+          setHasMore(false)
+          return prev
+        }
 
-  if (data?.menu) {
-    setTimeout(() => {
-      fetchMore({
-        variables: {
-          offset: data.menu?.length,
-        },
-        updateQuery: (prev, { fetchMoreResult }) => {
-          if (!fetchMoreResult) {
-            return prev
-          }
-          return Object.assign({}, prev, {
-            menu: fetchMoreResult.menu,
-          })
-        },
-      })
-    }, 1000)
+        return Object.assign({}, prev, {
+          menu: (prev.menu || []).concat(fetchMoreResult.menu),
+        })
+      },
+    })
   }
 
   return (
     <Layout>
       <SEO title="Home" />
       {loading && <Loader />}
+      {!loading && data?.menu && (
+        <Menu
+          menu={data.menu}
+          onLoadMore={loadMore.bind(null, data.menu?.length || 0)}
+          hasMore={hasMore}
+        />
+      )}
     </Layout>
   )
 }
