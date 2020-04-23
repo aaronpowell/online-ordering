@@ -1,0 +1,15 @@
+.spinner {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.spinner i {
+  animation: spinner 0.6s linear infinite;
+  font-size: 36px;
+}
+
+@keyframes spinner {
+  to {
+    transform: rotate(360deg);
+  }
+}

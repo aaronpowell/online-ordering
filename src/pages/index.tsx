@@ -8,6 +8,7 @@ const client = new ApolloClient({
 
 import Layout from "../components/layout"
 import SEO from "../components/seo"
+import Loader from "../components/loader"
 
 const IndexPage: React.FC = () => {
   const { data, loading, fetchMore } = useGetMenuItemsQuery({
@@ -37,6 +38,7 @@ const IndexPage: React.FC = () => {
   return (
     <Layout>
       <SEO title="Home" />
+      {loading && <Loader />}
     </Layout>
   )
 }
