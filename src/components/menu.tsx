@@ -11,10 +11,21 @@ type MenuProps = {
 const Menu: React.FC<MenuProps> = ({ menu, onLoadMore, hasMore }) => (
   <div>
     <h2>Menu</h2>
-    {menu.map(item => (
-      <MenuItem key={item.id} item={item} />
-    ))}
-    {hasMore && <button onClick={(): void => onLoadMore()}>Load More</button>}
+    <div className="flex flex-wrap content-center">
+      {menu.map(item => (
+        <MenuItem key={item.id} item={item} />
+      ))}
+    </div>
+    {hasMore && (
+      <div className="text-center">
+        <button
+          onClick={(): void => onLoadMore()}
+          className="px-5 py-3 rounded-lg shadow-lg bg-indigo-600 text-sm text-white uppercase tracking-wider font-semibold"
+        >
+          Load More
+        </button>
+      </div>
+    )}
   </div>
 )
 

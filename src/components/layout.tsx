@@ -18,7 +18,7 @@ const Layout: React.FC = ({ children }) => {
   return (
     <div>
       <Header siteTitle={data.site.siteMetadata.title} />
-      <div className="max-w-lg mx-auto">
+      <div className="mx-auto max-w-full px-12">
         <main>{children}</main>
         <footer>
           © {new Date().getFullYear()}, Built with
