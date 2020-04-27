@@ -5,17 +5,15 @@ import { DataStore } from "../DataStore"
 import { Order, MenuItem, User, OrderState } from "../graphql/generated/types"
 import { UserInputError } from "apollo-server-azure-functions"
 
-export { menuItems, orders, users }
-
 const itemsPerPage = 5
 
 class MockDataStoreImpl implements DataStore {
   // Query
   orders(userId: string): Order[] {
-    return orders.filter(o => o.orderer.id === userId)
+    return orders.filter((o) => o.orderer.id === userId)
   }
   order(orderId: string): Order {
-    return orders.find(o => o.id === orderId)
+    return orders.find((o) => o.id === orderId)
   }
   menuItems(offset: number): MenuItem[] {
     const items = menuItems.slice(offset, offset + itemsPerPage)
@@ -23,10 +21,10 @@ class MockDataStoreImpl implements DataStore {
     return items.length ? items : null
   }
   menuItem(id: string): MenuItem {
-    return menuItems.find(m => m.id === id)
+    return menuItems.find((m) => m.id === id)
   }
   user(userId: string): User {
-    return users.find(u => u.id === userId)
+    return users.find((u) => u.id === userId)
   }
 
   // Mutation
@@ -38,7 +36,7 @@ class MockDataStoreImpl implements DataStore {
     }
 
     if (userId) {
-      const user = users.find(u => u.id === userId)
+      const user = users.find((u) => u.id === userId)
       if (!user) {
         throw new UserInputError("UserID did not match a valid user")
       }
@@ -86,12 +84,8 @@ class MockDataStoreImpl implements DataStore {
       "The order could not be created using the provided information"
     )
   }
-  addItemToOrder(
-    orderId: string,
-    menuItemId: string,
-    quantity: number
-  ): Order {
-    const order = orders.find(o => o.id === orderId)
+  addItemToOrder(orderId: string, menuItemId: string, quantity: number): Order {
+    const order = orders.find((o) => o.id === orderId)
 
     if (!order) {
       throw new UserInputError("The order was not found in the system")
@@ -103,7 +97,7 @@ class MockDataStoreImpl implements DataStore {
       )
     }
 
-    const menuItem = menuItems.find(mi => mi.id === menuItemId)
+    const menuItem = menuItems.find((mi) => mi.id === menuItemId)
 
     if (!menuItem) {
       throw new UserInputError("That item isn't on the menu")
@@ -126,4 +120,4 @@ class MockDataStoreImpl implements DataStore {
   }
 }
 
-export const dataStore = new MockDataStoreImpl()
+export const dataStore: DataStore = new MockDataStoreImpl()
