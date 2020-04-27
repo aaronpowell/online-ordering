@@ -9,26 +9,26 @@ const itemsPerPage = 5
 
 class MockDataStoreImpl implements DataStore {
   // Query
-  orders(userId: string): Order[] {
-    return orders.filter((o) => o.orderer.id === userId)
+  orders(userId: string): Promise<Order[]> {
+    return Promise.resolve(orders.filter((o) => o.orderer.id === userId))
   }
-  order(orderId: string): Order {
-    return orders.find((o) => o.id === orderId)
+  order(orderId: string): Promise<Order> {
+    return Promise.resolve(orders.find((o) => o.id === orderId))
   }
-  menuItems(offset: number): MenuItem[] {
+  menuItems(offset: number): Promise<MenuItem[]> {
     const items = menuItems.slice(offset, offset + itemsPerPage)
 
-    return items.length ? items : null
+    return Promise.resolve(items.length ? items : null)
   }
-  menuItem(id: string): MenuItem {
-    return menuItems.find((m) => m.id === id)
+  menuItem(id: string): Promise<MenuItem> {
+    return Promise.resolve(menuItems.find((m) => m.id === id))
   }
-  user(userId: string): User {
-    return users.find((u) => u.id === userId)
+  user(userId: string): Promise<User> {
+    return Promise.resolve(users.find((u) => u.id === userId))
   }
 
   // Mutation
-  createOrder(userId: string, sessionId: string): Order {
+  createOrder(userId: string, sessionId: string): Promise<Order> {
     if (!userId && !sessionId) {
       throw new UserInputError(
         "Please provide either a user or session to create the order for"
@@ -51,7 +51,7 @@ class MockDataStoreImpl implements DataStore {
       }
 
       orders.push(order)
-      return order
+      return Promise.resolve(order)
     }
 
     if (sessionId) {
@@ -77,14 +77,18 @@ class MockDataStoreImpl implements DataStore {
       }
 
       orders.push(order)
-      return order
+      return Promise.resolve(order)
     }
 
     throw new Error(
       "The order could not be created using the provided information"
     )
   }
-  addItemToOrder(orderId: string, menuItemId: string, quantity: number): Order {
+  addItemToOrder(
+    orderId: string,
+    menuItemId: string,
+    quantity: number
+  ): Promise<Order> {
     const order = orders.find((o) => o.id === orderId)
 
     if (!order) {
@@ -116,7 +120,7 @@ class MockDataStoreImpl implements DataStore {
       0
     )
 
-    return order
+    return Promise.resolve(order)
   }
 }
 

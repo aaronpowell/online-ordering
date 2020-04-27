@@ -127,6 +127,7 @@ export const OrderFieldsFragmentDoc = gql`
     items {
       quantity
       item {
+        id
         name
         price
       }
@@ -335,7 +336,10 @@ export type OrderFieldsFragment = { __typename?: "Order" } & Pick<
 > & {
     items: Array<
       { __typename?: "OrderItem" } & Pick<OrderItem, "quantity"> & {
-          item: { __typename?: "MenuItem" } & Pick<MenuItem, "name" | "price">
+          item: { __typename?: "MenuItem" } & Pick<
+            MenuItem,
+            "id" | "name" | "price"
+          >
         }
     >
   }

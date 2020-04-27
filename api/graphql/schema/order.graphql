@@ -34,6 +34,7 @@ fragment OrderFields on Order {
   items {
     quantity
     item {
+      id
       name
       price
     }
