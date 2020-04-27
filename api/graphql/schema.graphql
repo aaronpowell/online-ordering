@@ -6,6 +6,7 @@ scalar DateTime
 
 schema {
   query: Query
+  mutation: Mutation
 }
 
 type Query {
@@ -14,4 +15,9 @@ type Query {
   order(id: ID!): Order
   user(id: ID!): User
   orders(userId: ID!): [Order!]!
+}
+
+type Mutation {
+  createOrder(userId: ID, sessionId: ID): Order
+  addItemToOrder(orderId: ID!, menuItemId: ID!, quantity: Int!): Order
 }

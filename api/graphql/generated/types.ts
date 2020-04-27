@@ -38,6 +38,23 @@ export type MenuItem = {
   vegetarian: Scalars["Boolean"]
 }
 
+export type Mutation = {
+  __typename?: "Mutation"
+  addItemToOrder: Maybe<Order>
+  createOrder: Maybe<Order>
+}
+
+export type MutationAddItemToOrderArgs = {
+  orderId: Scalars["ID"]
+  menuItemId: Scalars["ID"]
+  quantity: Scalars["Int"]
+}
+
+export type MutationCreateOrderArgs = {
+  userId: Maybe<Scalars["ID"]>
+  sessionId: Maybe<Scalars["ID"]>
+}
+
 export type Order = {
   __typename?: "Order"
   date: Maybe<Scalars["DateTime"]>
@@ -55,6 +72,7 @@ export type OrderItem = {
 }
 
 export enum OrderState {
+  Ordering = "Ordering",
   Placed = "Placed",
   Preparing = "Preparing",
   Ready = "Ready",
@@ -219,6 +237,7 @@ export type ResolversTypes = {
   User: ResolverTypeWrapper<User>
   Address: ResolverTypeWrapper<Address>
   OrderState: OrderState
+  Mutation: ResolverTypeWrapper<{}>
 }
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -236,6 +255,7 @@ export type ResolversParentTypes = {
   User: User
   Address: Address
   OrderState: OrderState
+  Mutation: {}
 }
 
 export type AddressResolvers<
@@ -271,6 +291,27 @@ export type MenuItemResolvers<
   price: Resolver<ResolversTypes["Float"], ParentType, ContextType>
   vegetarian: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>
   __isTypeOf?: isTypeOfResolverFn<ParentType>
+}
+
+export type MutationResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes["Mutation"] = ResolversParentTypes["Mutation"]
+> = {
+  addItemToOrder: Resolver<
+    Maybe<ResolversTypes["Order"]>,
+    ParentType,
+    ContextType,
+    RequireFields<
+      MutationAddItemToOrderArgs,
+      "orderId" | "menuItemId" | "quantity"
+    >
+  >
+  createOrder: Resolver<
+    Maybe<ResolversTypes["Order"]>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationCreateOrderArgs, never>
+  >
 }
 
 export type OrderResolvers<
@@ -346,6 +387,7 @@ export type Resolvers<ContextType = any> = {
   Address: AddressResolvers<ContextType>
   DateTime: GraphQLScalarType
   MenuItem: MenuItemResolvers<ContextType>
+  Mutation: MutationResolvers<ContextType>
   Order: OrderResolvers<ContextType>
   OrderItem: OrderItemResolvers<ContextType>
   Query: QueryResolvers<ContextType>
@@ -395,3 +437,12 @@ export type OrderFieldsFragment = { __typename?: "Order" } & Pick<
         }
     >
   }
+
+export type CreateOrderMutationVariables = {
+  userId: Maybe<Scalars["ID"]>
+  sessionId: Maybe<Scalars["ID"]>
+}
+
+export type CreateOrderMutation = { __typename?: "Mutation" } & {
+  createOrder: Maybe<{ __typename?: "Order" } & OrderFieldsFragment>
+}

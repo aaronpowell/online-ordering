@@ -32,6 +32,23 @@ export type MenuItem = {
   vegetarian: Scalars["Boolean"]
 }
 
+export type Mutation = {
+  __typename?: "Mutation"
+  addItemToOrder?: Maybe<Order>
+  createOrder?: Maybe<Order>
+}
+
+export type MutationAddItemToOrderArgs = {
+  orderId: Scalars["ID"]
+  menuItemId: Scalars["ID"]
+  quantity: Scalars["Int"]
+}
+
+export type MutationCreateOrderArgs = {
+  userId?: Maybe<Scalars["ID"]>
+  sessionId?: Maybe<Scalars["ID"]>
+}
+
 export type Order = {
   __typename?: "Order"
   date?: Maybe<Scalars["DateTime"]>
@@ -49,6 +66,7 @@ export type OrderItem = {
 }
 
 export enum OrderState {
+  Ordering = "Ordering",
   Placed = "Placed",
   Preparing = "Preparing",
   Ready = "Ready",
@@ -232,6 +250,58 @@ export type FindOrdersForUserQueryResult = ApolloReactCommon.QueryResult<
   FindOrdersForUserQuery,
   FindOrdersForUserQueryVariables
 >
+export const CreateOrderDocument = gql`
+  mutation createOrder($userId: ID, $sessionId: ID) {
+    createOrder(userId: $userId, sessionId: $sessionId) {
+      ...OrderFields
+    }
+  }
+  ${OrderFieldsFragmentDoc}
+`
+export type CreateOrderMutationFn = ApolloReactCommon.MutationFunction<
+  CreateOrderMutation,
+  CreateOrderMutationVariables
+>
+
+/**
+ * __useCreateOrderMutation__
+ *
+ * To run a mutation, you first call `useCreateOrderMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateOrderMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createOrderMutation, { data, loading, error }] = useCreateOrderMutation({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *      sessionId: // value for 'sessionId'
+ *   },
+ * });
+ */
+export function useCreateOrderMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    CreateOrderMutation,
+    CreateOrderMutationVariables
+  >
+) {
+  return ApolloReactHooks.useMutation<
+    CreateOrderMutation,
+    CreateOrderMutationVariables
+  >(CreateOrderDocument, baseOptions)
+}
+export type CreateOrderMutationHookResult = ReturnType<
+  typeof useCreateOrderMutation
+>
+export type CreateOrderMutationResult = ApolloReactCommon.MutationResult<
+  CreateOrderMutation
+>
+export type CreateOrderMutationOptions = ApolloReactCommon.BaseMutationOptions<
+  CreateOrderMutation,
+  CreateOrderMutationVariables
+>
 export type GetMenuItemsQueryVariables = {
   offset?: Maybe<Scalars["Int"]>
 }
@@ -269,3 +339,12 @@ export type OrderFieldsFragment = { __typename?: "Order" } & Pick<
         }
     >
   }
+
+export type CreateOrderMutationVariables = {
+  userId?: Maybe<Scalars["ID"]>
+  sessionId?: Maybe<Scalars["ID"]>
+}
+
+export type CreateOrderMutation = { __typename?: "Mutation" } & {
+  createOrder?: Maybe<{ __typename?: "Order" } & OrderFieldsFragment>
+}
