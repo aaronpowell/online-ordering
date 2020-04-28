@@ -82,7 +82,6 @@ export enum OrderState {
 export type Query = {
   __typename?: "Query"
   menu: Maybe<Array<MenuItem>>
-  menuItem: Maybe<MenuItem>
   order: Maybe<Order>
   orders: Array<Order>
   user: Maybe<User>
@@ -90,10 +89,6 @@ export type Query = {
 
 export type QueryMenuArgs = {
   offset?: Maybe<Scalars["Int"]>
-}
-
-export type QueryMenuItemArgs = {
-  id: Scalars["ID"]
 }
 
 export type QueryOrderArgs = {
@@ -346,12 +341,6 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QueryMenuArgs, "offset">
   >
-  menuItem: Resolver<
-    Maybe<ResolversTypes["MenuItem"]>,
-    ParentType,
-    ContextType,
-    RequireFields<QueryMenuItemArgs, "id">
-  >
   order: Resolver<
     Maybe<ResolversTypes["Order"]>,
     ParentType,
@@ -424,7 +413,22 @@ export type FindOrdersForUserQueryVariables = {
 }
 
 export type FindOrdersForUserQuery = { __typename?: "Query" } & {
-  orders: Array<{ __typename?: "Order" } & OrderFieldsFragment>
+  orders: Array<
+    { __typename?: "Order" } & Pick<
+      Order,
+      "id" | "state" | "price" | "date"
+    > & {
+        orderer: { __typename?: "User" } & Pick<User, "id" | "name">
+        items: Array<
+          { __typename?: "OrderItem" } & Pick<OrderItem, "quantity"> & {
+              item: { __typename?: "MenuItem" } & Pick<
+                MenuItem,
+                "id" | "name" | "price"
+              >
+            }
+        >
+      }
+  >
 }
 
 export type OrderFieldsFragment = { __typename?: "Order" } & Pick<

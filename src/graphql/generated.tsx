@@ -76,7 +76,6 @@ export enum OrderState {
 export type Query = {
   __typename?: "Query"
   menu?: Maybe<Array<MenuItem>>
-  menuItem?: Maybe<MenuItem>
   order?: Maybe<Order>
   orders: Array<Order>
   user?: Maybe<User>
@@ -84,10 +83,6 @@ export type Query = {
 
 export type QueryMenuArgs = {
   offset?: Maybe<Scalars["Int"]>
-}
-
-export type QueryMenuItemArgs = {
-  id: Scalars["ID"]
 }
 
 export type QueryOrderArgs = {
@@ -197,10 +192,24 @@ export type GetMenuItemsQueryResult = ApolloReactCommon.QueryResult<
 export const FindOrdersForUserDocument = gql`
   query findOrdersForUser($userId: ID!) {
     orders(userId: $userId) {
-      ...OrderFields
+      id
+      state
+      price
+      date
+      orderer {
+        id
+        name
+      }
+      items {
+        quantity
+        item {
+          id
+          name
+          price
+        }
+      }
     }
   }
-  ${OrderFieldsFragmentDoc}
 `
 
 /**
@@ -327,7 +336,22 @@ export type FindOrdersForUserQueryVariables = {
 }
 
 export type FindOrdersForUserQuery = { __typename?: "Query" } & {
-  orders: Array<{ __typename?: "Order" } & OrderFieldsFragment>
+  orders: Array<
+    { __typename?: "Order" } & Pick<
+      Order,
+      "id" | "state" | "price" | "date"
+    > & {
+        orderer: { __typename?: "User" } & Pick<User, "id" | "name">
+        items: Array<
+          { __typename?: "OrderItem" } & Pick<OrderItem, "quantity"> & {
+              item: { __typename?: "MenuItem" } & Pick<
+                MenuItem,
+                "id" | "name" | "price"
+              >
+            }
+        >
+      }
+  >
 }
 
 export type OrderFieldsFragment = { __typename?: "Order" } & Pick<

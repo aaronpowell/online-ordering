@@ -25,7 +25,22 @@ type Order {
 
 query findOrdersForUser($userId: ID!) {
   orders(userId: $userId) {
-    ...OrderFields
+    id
+    state
+    price
+    date
+    orderer {
+      id
+      name
+    }
+    items {
+      quantity
+      item {
+        id
+        name
+        price
+      }
+    }
   }
 }
 
