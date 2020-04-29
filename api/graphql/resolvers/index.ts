@@ -1,13 +1,8 @@
 import {
   QueryResolvers,
-  MenuItem,
   Order,
-  User,
   MutationResolvers,
   OrderResolvers,
-  OrderItem,
-  OrderState,
-  QueryOrdersArgs,
 } from "../generated/types"
 import { IResolvers } from "apollo-server-azure-functions"
 import { DataStore } from "../../data/DataStore"
@@ -24,62 +19,54 @@ type ResolverContext = {
 
 const resolvers: Resolvers = {
   Query: {
-    menu(_, { offset }, { dataStore }: ResolverContext): Promise<MenuItem[]> {
+    menu(_, { offset }, { dataStore }: ResolverContext) {
       return dataStore.menuItems(offset)
     },
-    order(_, { id }, { dataStore }: ResolverContext): Promise<Order> {
+    order(_, { id }, { dataStore }: ResolverContext) {
       return dataStore.order(id)
     },
-    async orders(
-      _,
-      { userId },
-      { dataStore }: ResolverContext
-    ): Promise<(Order & QueryOrdersArgs)[]> {
+    async orders(_, { userId }, { dataStore }: ResolverContext) {
       const orders = await dataStore.orders(userId)
       return orders.map((order) => Object.assign({}, order, { userId }))
     },
-    user(_, { id }, { dataStore }: ResolverContext): Promise<User> {
+    user(_, { id }, { dataStore }: ResolverContext) {
       return dataStore.user(id)
     },
   },
   Mutation: {
-    createOrder(
-      _,
-      { sessionId, userId },
-      { dataStore }: ResolverContext
-    ): Promise<Order> {
+    createOrder(_, { sessionId, userId }, { dataStore }: ResolverContext) {
       return dataStore.createOrder(userId, sessionId)
     },
     addItemToOrder(
       _,
       { orderId, menuItemId, quantity },
       { dataStore }: ResolverContext
-    ): Promise<Order> {
+    ) {
       return dataStore.addItemToOrder(orderId, menuItemId, quantity)
     },
   },
 
   Order: {
     orderer(
-      order: Order & QueryOrdersArgs,
+      order: Order & { userId: string },
       _,
       { dataStore }: ResolverContext
-    ): Promise<User> {
+    ) {
       return dataStore.user(order.userId)
     },
-    date(order): Date {
+    date(order) {
       return order.date
     },
-    id(order): string {
+    id(order) {
       return order.id
     },
-    items(order): OrderItem[] {
+    items(order) {
       return []
     },
-    price(order): number {
+    price(order) {
       return order.price
     },
-    state(order): OrderState {
+    state(order) {
       return order.state
     },
   },
