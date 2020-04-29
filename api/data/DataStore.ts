@@ -16,3 +16,7 @@ export interface DataStore {
     quantity: number
   ): Promise<Order>
 }
+
+export type ResolverContext = {
+  dataStore: DataStore
+}

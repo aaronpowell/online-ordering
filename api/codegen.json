@@ -13,7 +13,9 @@
         "scalars": {
           "DateTime": "Date"
         },
-        "avoidOptionals": true
+        "avoidOptionals": true,
+        "useIndexSignature": true,
+        "contextType": "../../data/DataStore#ResolverContext"
       }
     },
     "./graphql/generated/graphql.schema.json": { "plugins": ["introspection"] },

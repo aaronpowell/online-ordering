@@ -5,7 +5,6 @@ import {
   OrderResolvers,
 } from "../generated/types"
 import { IResolvers } from "apollo-server-azure-functions"
-import { DataStore } from "../../data/DataStore"
 
 interface Resolvers extends IResolvers {
   Query: QueryResolvers
@@ -13,45 +12,33 @@ interface Resolvers extends IResolvers {
   Order: OrderResolvers
 }
 
-type ResolverContext = {
-  dataStore: DataStore
-}
-
 const resolvers: Resolvers = {
   Query: {
-    menu(_, { offset }, { dataStore }: ResolverContext) {
+    menu(_, { offset }, { dataStore }) {
       return dataStore.menuItems(offset)
     },
-    order(_, { id }, { dataStore }: ResolverContext) {
+    order(_, { id }, { dataStore }) {
       return dataStore.order(id)
     },
-    async orders(_, { userId }, { dataStore }: ResolverContext) {
+    async orders(_, { userId }, { dataStore }) {
       const orders = await dataStore.orders(userId)
       return orders.map((order) => Object.assign({}, order, { userId }))
     },
-    user(_, { id }, { dataStore }: ResolverContext) {
+    user(_, { id }, { dataStore }) {
       return dataStore.user(id)
     },
   },
   Mutation: {
-    createOrder(_, { sessionId, userId }, { dataStore }: ResolverContext) {
+    createOrder(_, { sessionId, userId }, { dataStore }) {
       return dataStore.createOrder(userId, sessionId)
     },
-    addItemToOrder(
-      _,
-      { orderId, menuItemId, quantity },
-      { dataStore }: ResolverContext
-    ) {
+    addItemToOrder(_, { orderId, menuItemId, quantity }, { dataStore }) {
       return dataStore.addItemToOrder(orderId, menuItemId, quantity)
     },
   },
 
   Order: {
-    orderer(
-      order: Order & { userId: string },
-      _,
-      { dataStore }: ResolverContext
-    ) {
+    orderer(order: Order & { userId: string }, _, { dataStore }) {
       return dataStore.user(order.userId)
     },
     date(order) {
