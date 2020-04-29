@@ -1,6 +1,5 @@
 import {
   QueryResolvers,
-  Order,
   MutationResolvers,
   OrderResolvers,
 } from "../generated/types"
@@ -38,7 +37,7 @@ const resolvers: Resolvers = {
   },
 
   Order: {
-    orderer(order: Order & { userId: string }, _, { dataStore }) {
+    orderer(order, _, { dataStore }) {
       return dataStore.user(order.userId)
     },
     date(order) {

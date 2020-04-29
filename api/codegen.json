@@ -15,7 +15,10 @@
         },
         "avoidOptionals": true,
         "useIndexSignature": true,
-        "contextType": "../../data/DataStore#ResolverContext"
+        "contextType": "../../data/DataStore#ResolverContext",
+        "mappers": {
+          "Order": "../../data/types#OrderModel"
+        }
       }
     },
     "./graphql/generated/graphql.schema.json": { "plugins": ["introspection"] },

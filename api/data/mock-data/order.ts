@@ -1,14 +1,17 @@
-import { Order, OrderState } from "../../graphql/generated/types"
+import { OrderState } from "../../graphql/generated/types"
 import { aaron, jane } from "./user"
 import { menuItems } from "./menu"
+import { OrderModel } from "../types"
 
-const orders: Order[] = [
+const orders: OrderModel[] = [
   {
-    id: "1",
-    orderer: aaron,
+    id: "order-1",
+    userId: aaron.id,
     items: [
       {
-        item: menuItems[0],
+        menuItemId: menuItems[0].id,
+        menuItemName: menuItems[0].name,
+        price: menuItems[0].price,
         quantity: 1,
       },
     ],
@@ -17,45 +20,33 @@ const orders: Order[] = [
     date: new Date(),
   },
   {
-    id: "2",
-    orderer: jane,
+    id: "order-2",
+    userId: aaron.id,
     items: [
       {
-        item: menuItems[2],
-        quantity: 1,
-      },
-      {
-        item: menuItems[5],
-        quantity: 1,
-      },
-    ],
-    price: menuItems[2].price + menuItems[5].price,
-    state: OrderState.Placed,
-    date: new Date(),
-  },
-  {
-    id: "3",
-    orderer: aaron,
-    items: [
-      {
-        item: menuItems[0],
-        quantity: 1,
-      },
-      {
-        item: menuItems[4],
-        quantity: 1,
-      },
-      {
-        item: menuItems[8],
-        quantity: 1,
-      },
-      {
-        item: menuItems[9],
+        menuItemId: menuItems[0].id,
+        menuItemName: menuItems[0].name,
+        price: menuItems[0].price,
         quantity: 1,
       },
     ],
     price: menuItems[0].price,
     state: OrderState.Complete,
+    date: new Date(),
+  },
+  {
+    id: "order-3",
+    userId: jane.id,
+    items: [
+      {
+        menuItemId: menuItems[0].id,
+        menuItemName: menuItems[0].name,
+        price: menuItems[0].price,
+        quantity: 1,
+      },
+    ],
+    price: menuItems[0].price,
+    state: OrderState.Preparing,
     date: new Date(),
   },
 ]

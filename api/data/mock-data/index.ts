@@ -2,33 +2,33 @@ import { menuItems } from "./menu"
 import { orders } from "./order"
 import { users } from "./user"
 import { DataStore } from "../DataStore"
-import { MenuItem, User, OrderState, Order } from "../../graphql/generated/types"
+import { OrderState } from "../../graphql/generated/types"
 import { UserInputError } from "apollo-server-azure-functions"
 
 const itemsPerPage = 5
 
 class MockDataStoreImpl implements DataStore {
   // Query
-  orders(userId: string): Promise<Order[]> {
-    return Promise.resolve(orders.filter((o) => o.orderer.id === userId))
+  orders(userId: string) {
+    return Promise.resolve(orders.filter((o) => o.userId === userId))
   }
-  order(orderId: string): Promise<Order> {
+  order(orderId: string) {
     return Promise.resolve(orders.find((o) => o.id === orderId))
   }
-  menuItems(offset: number): Promise<MenuItem[]> {
+  menuItems(offset: number) {
     const items = menuItems.slice(offset, offset + itemsPerPage)
 
     return Promise.resolve(items.length ? items : null)
   }
-  menuItem(id: string): Promise<MenuItem> {
+  menuItem(id: string) {
     return Promise.resolve(menuItems.find((m) => m.id === id))
   }
-  user(userId: string): Promise<User> {
+  user(userId: string) {
     return Promise.resolve(users.find((u) => u.id === userId))
   }
 
   // Mutation
-  createOrder(userId: string, sessionId: string): Promise<Order> {
+  createOrder(userId: string, sessionId: string) {
     if (!userId && !sessionId) {
       throw new UserInputError(
         "Please provide either a user or session to create the order for"
@@ -43,7 +43,7 @@ class MockDataStoreImpl implements DataStore {
 
       const order = {
         id: (orders.length + 1).toString(),
-        orderer: user,
+        userId: user.id,
         items: [],
         date: new Date(),
         price: 0,
@@ -69,7 +69,7 @@ class MockDataStoreImpl implements DataStore {
       users.push(user)
       const order = {
         id: orders.length.toString(),
-        orderer: user,
+        userId: user.id,
         items: [],
         date: new Date(),
         price: 0,
@@ -84,11 +84,7 @@ class MockDataStoreImpl implements DataStore {
       "The order could not be created using the provided information"
     )
   }
-  addItemToOrder(
-    orderId: string,
-    menuItemId: string,
-    quantity: number
-  ): Promise<Order> {
+  addItemToOrder(orderId: string, menuItemId: string, quantity: number) {
     const order = orders.find((o) => o.id === orderId)
 
     if (!order) {
@@ -112,11 +108,13 @@ class MockDataStoreImpl implements DataStore {
     }
 
     order.items.push({
-      item: menuItem,
+      menuItemId: menuItem.id,
+      menuItemName: menuItem.name,
+      price: menuItem.price,
       quantity,
     })
     order.price = order.items.reduce(
-      (price, item) => (price += item.item.price * quantity),
+      (price, item) => (price += item.price * quantity),
       0
     )
 

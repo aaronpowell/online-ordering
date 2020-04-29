@@ -1,14 +1,9 @@
 import { DataStore } from "../DataStore"
 import { CosmosClient } from "@azure/cosmos"
-import {
-  Order,
-  MenuItem,
-  User,
-  OrderState,
-} from "../../graphql/generated/types"
+import { MenuItem, User, OrderState } from "../../graphql/generated/types"
 import { UserInputError } from "apollo-server-azure-functions"
 import { v4 as uuid } from "uuid"
-import { CosmosOrder, UserOrderMapping } from "./types"
+import { OrderModel, UserOrderMapping } from "../types"
 
 class CosmosDataStore implements DataStore {
   #databaseName = "OnlineOrdering"
@@ -43,7 +38,7 @@ class CosmosDataStore implements DataStore {
       .fetchAll()
 
     const orderResponse = await container.items
-      .query<Order>({
+      .query<OrderModel>({
         query: `SELECT *
               FROM o
               WHERE o.id IN(@orderIds)`,
@@ -71,7 +66,9 @@ class CosmosDataStore implements DataStore {
       ],
     }
 
-    const iter = await this.getContainer().items.query<Order>(query).fetchAll()
+    const iter = await this.getContainer()
+      .items.query<OrderModel>(query)
+      .fetchAll()
 
     return iter.resources[0]
   }
@@ -171,7 +168,7 @@ class CosmosDataStore implements DataStore {
       throw new UserInputError("Unable to create order for the user")
     }
 
-    const { resource } = await this.getContainer().items.create<CosmosOrder>({
+    const { resource } = await this.getContainer().items.create<OrderModel>({
       id: uuid(),
       date: new Date(),
       userId: user.id,
@@ -180,20 +177,13 @@ class CosmosDataStore implements DataStore {
       state: OrderState.Ordering,
     })
 
-    return {
-      id: resource.id,
-      date: resource.date,
-      orderer: user,
-      price: resource.price,
-      items: [],
-      state: resource.state,
-    }
+    return resource
   }
   addItemToOrder(
     orderId: string,
     menuItemId: string,
     quantity: number
-  ): Promise<Order> {
+  ): Promise<OrderModel> {
     throw new Error("Method not implemented.")
   }
 }

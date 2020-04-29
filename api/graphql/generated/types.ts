@@ -3,6 +3,7 @@ import {
   GraphQLScalarType,
   GraphQLScalarTypeConfig,
 } from "graphql"
+import { OrderModel } from "../../data/types"
 import { ResolverContext } from "../../data/DataStore"
 export type Maybe<T> = T | null
 export type RequireFields<T, K extends keyof T> = {
@@ -230,7 +231,7 @@ export type ResolversTypes = ResolversObject<{
   Boolean: ResolverTypeWrapper<Scalars["Boolean"]>
   ID: ResolverTypeWrapper<Scalars["ID"]>
   Float: ResolverTypeWrapper<Scalars["Float"]>
-  Order: ResolverTypeWrapper<Order>
+  Order: ResolverTypeWrapper<OrderModel>
   DateTime: ResolverTypeWrapper<Scalars["DateTime"]>
   OrderItem: ResolverTypeWrapper<OrderItem>
   User: ResolverTypeWrapper<User>
@@ -248,7 +249,7 @@ export type ResolversParentTypes = ResolversObject<{
   Boolean: Scalars["Boolean"]
   ID: Scalars["ID"]
   Float: Scalars["Float"]
-  Order: Order
+  Order: OrderModel
   DateTime: Scalars["DateTime"]
   OrderItem: OrderItem
   User: User

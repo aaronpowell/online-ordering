@@ -1,10 +1,11 @@
-import { Order } from "../../graphql/generated/types"
+import { Order } from "../graphql/generated/types"
 
-export type CosmosOrder = Pick<Order, "id" | "date" | "price" | "state"> & {
+export type OrderModel = Pick<Order, "id" | "date" | "price" | "state"> & {
   userId: string
   items: {
     menuItemId: string
     menuItemName: string
+    price: number
     quantity: number
   }[]
 }
