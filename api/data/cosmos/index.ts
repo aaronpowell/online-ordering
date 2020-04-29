@@ -19,33 +19,18 @@ class CosmosDataStore implements DataStore {
 
   // Query
   async orders(userId: string) {
-    const query = {
-      query: `SELECT *
-              FROM o
-              WHERE o.partitionKey = @userId`,
-      parameters: [
-        {
-          name: "@userId",
-          value: userId,
-        },
-      ],
-    }
+    console.log(`Getting orders for ${userId}`)
 
-    const container = this.getContainer()
-
-    const userOrders = await container.items
-      .query<UserOrderMapping>(query)
-      .fetchAll()
-
-    const orderResponse = await container.items
-      .query<OrderModel>({
+    const orderResponse = await this.getContainer()
+      .items.query<OrderModel>({
         query: `SELECT *
-              FROM o
-              WHERE o.id IN(@orderIds)`,
+                FROM o
+                WHERE o.partitionKey = @userId
+                AND o._type = 'order'`,
         parameters: [
           {
-            name: "@orderIds",
-            value: userOrders.resources.map((ou) => ou.orderId),
+            name: "@userId",
+            value: userId,
           },
         ],
       })
