@@ -1,4 +1,10 @@
-import { Order } from "../graphql/generated/types"
+import { Order, MenuItem, User } from "../graphql/generated/types"
+
+interface Model {
+  id: string
+  _type: string
+  partitionKey: string
+}
 
 export type OrderModel = Pick<Order, "id" | "date" | "price" | "state"> & {
   userId: string
@@ -8,10 +14,12 @@ export type OrderModel = Pick<Order, "id" | "date" | "price" | "state"> & {
     price: number
     quantity: number
   }[]
-}
+} & Model
 
-export type UserOrderMapping = {
-  id: string
+export type OrderUserMapping = {
   orderId: string
   partitionKey: string
-}
+} & Model
+
+export type MenuItemModel = MenuItem & Model
+export type UserModel = User & Model

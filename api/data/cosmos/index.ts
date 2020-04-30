@@ -1,9 +1,14 @@
 import { DataStore } from "../DataStore"
 import { CosmosClient } from "@azure/cosmos"
-import { MenuItem, User, OrderState } from "../../graphql/generated/types"
+import { OrderState } from "../../graphql/generated/types"
 import { UserInputError } from "apollo-server-azure-functions"
 import { v4 as uuid } from "uuid"
-import { OrderModel, UserOrderMapping } from "../types"
+import {
+  OrderModel,
+  UserModel,
+  MenuItemModel,
+  OrderUserMapping,
+} from "../types"
 
 class CosmosDataStore implements DataStore {
   #databaseName = "OnlineOrdering"
@@ -19,18 +24,35 @@ class CosmosDataStore implements DataStore {
 
   // Query
   async orders(userId: string) {
-    console.log(`Getting orders for ${userId}`)
+    const container = this.getContainer()
 
-    const orderResponse = await this.getContainer()
-      .items.query<OrderModel>({
-        query: `SELECT *
+    const orderUserMapping = await container.items
+      .query<{ orderId: string }>({
+        query: `SELECT o.orderId
                 FROM o
                 WHERE o.partitionKey = @userId
-                AND o._type = 'order'`,
+                AND   o._type = 'order/user'`,
         parameters: [
           {
             name: "@userId",
             value: userId,
+          },
+        ],
+      })
+      .fetchAll()
+
+    console.log(`OrderId's`, orderUserMapping)
+
+    const orderResponse = await container.items
+      .query<OrderModel>({
+        query: `SELECT *
+                FROM o
+                WHERE ARRAY_CONTAINS(@orderIds, o.partitionKey)
+                AND o._type = 'order'`,
+        parameters: [
+          {
+            name: "@orderIds",
+            value: orderUserMapping.resources.map((o) => o.orderId),
           },
         ],
       })
@@ -42,7 +64,7 @@ class CosmosDataStore implements DataStore {
     const query = {
       query: `SELECT *
               FROM o
-              WHERE o.id = @orderId`,
+              WHERE o.partitionKey = @orderId`,
       parameters: [
         {
           name: "@orderId",
@@ -61,6 +83,7 @@ class CosmosDataStore implements DataStore {
     const query = {
       query: `SELECT *
               FROM m
+              WHERE m._type = 'menuItem'
               ORDER BY m.id
               OFFSET @offset
               LIMIT @count`,
@@ -77,7 +100,7 @@ class CosmosDataStore implements DataStore {
     }
 
     const iter = await this.getContainer()
-      .items.query<MenuItem>(query)
+      .items.query<MenuItemModel>(query)
       .fetchAll()
 
     return iter.resources
@@ -86,7 +109,7 @@ class CosmosDataStore implements DataStore {
     const query = {
       query: `SELECT *
               FROM o
-              WHERE o.id = @id`,
+              WHERE o.partitionKey = @id`,
       parameters: [
         {
           name: "@id",
@@ -96,16 +119,37 @@ class CosmosDataStore implements DataStore {
     }
 
     const iter = await this.getContainer()
-      .items.query<MenuItem>(query)
+      .items.query<MenuItemModel>(query)
       .fetchAll()
 
     return iter.resources[0]
   }
+
+  async menuItemsByIds(ids: string[]) {
+    const menuItemsResponse = await this.getContainer()
+      .items.query<MenuItemModel>({
+        query: `SELECT *
+                FROM mi
+                WHERE mi._type = 'menuItem'
+                AND   ARRAY_CONTAINS(@ids, mi.partitionKey)`,
+        parameters: [
+          {
+            name: "@ids",
+            value: ids,
+          },
+        ],
+      })
+      .fetchAll()
+
+    return menuItemsResponse.resources
+  }
+
   async user(userId: string) {
     const query = {
       query: `SELECT *
               FROM o
-              WHERE o.id = @userId`,
+              WHERE o.partitionKey = @userId
+              AND o._type = 'user'`,
       parameters: [
         {
           name: "@userId",
@@ -114,7 +158,9 @@ class CosmosDataStore implements DataStore {
       ],
     }
 
-    const iter = await this.getContainer().items.query<User>(query).fetchAll()
+    const iter = await this.getContainer()
+      .items.query<UserModel>(query)
+      .fetchAll()
 
     return iter.resources[0]
   }
@@ -127,7 +173,7 @@ class CosmosDataStore implements DataStore {
       )
     }
 
-    let user: User
+    let user: UserModel
 
     if (userId) {
       user = await this.user(userId)
@@ -135,7 +181,7 @@ class CosmosDataStore implements DataStore {
       const { resource } = await this.client
         .database(this.#databaseName)
         .container(this.#containerName)
-        .items.create<User>({
+        .items.create<UserModel>({
           id: sessionId,
           email: "",
           name: "",
@@ -144,6 +190,8 @@ class CosmosDataStore implements DataStore {
             state: "",
             postcode: "",
           },
+          partitionKey: sessionId,
+          _type: "user",
         })
 
       user = resource
@@ -153,23 +201,60 @@ class CosmosDataStore implements DataStore {
       throw new UserInputError("Unable to create order for the user")
     }
 
+    const orderId = uuid()
     const { resource } = await this.getContainer().items.create<OrderModel>({
-      id: uuid(),
+      id: orderId,
       date: new Date(),
       userId: user.id,
       price: 0,
       items: [],
       state: OrderState.Ordering,
+      _type: "order",
+      partitionKey: orderId,
+    })
+
+    await this.getContainer().items.create<OrderUserMapping>({
+      id: uuid(),
+      _type: "order/user",
+      partitionKey: user.id,
+      orderId: orderId,
     })
 
     return resource
   }
-  addItemToOrder(
+  async addItemToOrder(
     orderId: string,
     menuItemId: string,
     quantity: number
   ): Promise<OrderModel> {
-    throw new Error("Method not implemented.")
+    const order = await this.order(orderId)
+
+    if (!order) {
+      throw new UserInputError("Order doesn't exist in system")
+    }
+
+    const menuItem = await this.menuItem(menuItemId)
+
+    if (!menuItem) {
+      throw new UserInputError("Item not on the menu")
+    }
+
+    order.items.push({
+      menuItemId,
+      menuItemName: menuItem.name,
+      price: menuItem.price,
+      quantity,
+    })
+    order.price = order.items.reduce(
+      (price, item) => price + item.price * quantity,
+      0
+    )
+
+    const response = await this.getContainer()
+      .item(order.id, order.partitionKey)
+      .replace(order)
+
+    return response.resource
   }
 }
 

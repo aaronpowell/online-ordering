@@ -3,9 +3,10 @@ import {
   GraphQLScalarType,
   GraphQLScalarTypeConfig,
 } from "graphql"
-import { OrderModel } from "../../data/types"
+import { OrderModel, MenuItemModel, UserModel } from "../../data/types"
 import { ResolverContext } from "../../data/DataStore"
 export type Maybe<T> = T | null
+export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
 export type RequireFields<T, K extends keyof T> = {
   [X in Exclude<keyof T, K>]?: T[X]
 } &
@@ -226,15 +227,17 @@ export type DirectiveResolverFn<
 export type ResolversTypes = ResolversObject<{
   Query: ResolverTypeWrapper<{}>
   Int: ResolverTypeWrapper<Scalars["Int"]>
-  MenuItem: ResolverTypeWrapper<MenuItem>
+  MenuItem: ResolverTypeWrapper<MenuItemModel>
   String: ResolverTypeWrapper<Scalars["String"]>
   Boolean: ResolverTypeWrapper<Scalars["Boolean"]>
   ID: ResolverTypeWrapper<Scalars["ID"]>
   Float: ResolverTypeWrapper<Scalars["Float"]>
   Order: ResolverTypeWrapper<OrderModel>
   DateTime: ResolverTypeWrapper<Scalars["DateTime"]>
-  OrderItem: ResolverTypeWrapper<OrderItem>
-  User: ResolverTypeWrapper<User>
+  OrderItem: ResolverTypeWrapper<
+    Omit<OrderItem, "item"> & { item: ResolversTypes["MenuItem"] }
+  >
+  User: ResolverTypeWrapper<UserModel>
   Address: ResolverTypeWrapper<Address>
   OrderState: OrderState
   Mutation: ResolverTypeWrapper<{}>
@@ -244,15 +247,17 @@ export type ResolversTypes = ResolversObject<{
 export type ResolversParentTypes = ResolversObject<{
   Query: {}
   Int: Scalars["Int"]
-  MenuItem: MenuItem
+  MenuItem: MenuItemModel
   String: Scalars["String"]
   Boolean: Scalars["Boolean"]
   ID: Scalars["ID"]
   Float: Scalars["Float"]
   Order: OrderModel
   DateTime: Scalars["DateTime"]
-  OrderItem: OrderItem
-  User: User
+  OrderItem: Omit<OrderItem, "item"> & {
+    item: ResolversParentTypes["MenuItem"]
+  }
+  User: UserModel
   Address: Address
   OrderState: OrderState
   Mutation: {}

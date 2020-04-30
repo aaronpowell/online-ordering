@@ -1,13 +1,13 @@
-import { MenuItem, User } from "../graphql/generated/types"
-import { OrderModel } from "./types"
+import { OrderModel, UserModel, MenuItemModel } from "./types"
 
 export interface DataStore {
   // Query
   orders(userId: string): Promise<OrderModel[]>
   order(orderId: string): Promise<OrderModel>
-  menuItems(offset: number): Promise<MenuItem[]>
-  menuItem(id: string): Promise<MenuItem>
-  user(userId: string): Promise<User>
+  menuItems(offset: number): Promise<MenuItemModel[]>
+  menuItem(id: string): Promise<MenuItemModel>
+  user(userId: string): Promise<UserModel>
+  menuItemsByIds(ids: string[]): Promise<MenuItemModel[]>
 
   // Mutate
   createOrder(

@@ -17,7 +17,9 @@
         "useIndexSignature": true,
         "contextType": "../../data/DataStore#ResolverContext",
         "mappers": {
-          "Order": "../../data/types#OrderModel"
+          "Order": "../../data/types#OrderModel",
+          "MenuItem": "../../data/types#MenuItemModel",
+          "User": "../../data/types#UserModel"
         }
       }
     },

@@ -46,8 +46,17 @@ const resolvers: Resolvers = {
     id(order) {
       return order.id
     },
-    items(order) {
-      return []
+    async items(order, _, { dataStore }) {
+      const menuItems = await dataStore.menuItemsByIds(
+        order.items.map((mi) => mi.menuItemId)
+      )
+
+      return order.items.map((mi) => {
+        return {
+          quantity: mi.quantity,
+          item: menuItems.find((i) => i.id === mi.menuItemId),
+        }
+      })
     },
     price(order) {
       return order.price

@@ -7,6 +7,8 @@ const orders: OrderModel[] = [
   {
     id: "order-1",
     userId: aaron.id,
+    _type: "order",
+    partitionKey: "order-1",
     items: [
       {
         menuItemId: menuItems[0].id,
@@ -22,6 +24,8 @@ const orders: OrderModel[] = [
   {
     id: "order-2",
     userId: aaron.id,
+    _type: "order",
+    partitionKey: "order-2",
     items: [
       {
         menuItemId: menuItems[0].id,
@@ -37,6 +41,8 @@ const orders: OrderModel[] = [
   {
     id: "order-3",
     userId: jane.id,
+    _type: "order",
+    partitionKey: "order-3",
     items: [
       {
         menuItemId: menuItems[0].id,

@@ -26,6 +26,9 @@ class MockDataStoreImpl implements DataStore {
   user(userId: string) {
     return Promise.resolve(users.find((u) => u.id === userId))
   }
+  menuItemsByIds(ids: string[]) {
+    return Promise.resolve(menuItems.filter((m) => ids.indexOf(m.id) >= 0))
+  }
 
   // Mutation
   createOrder(userId: string, sessionId: string) {
@@ -48,6 +51,8 @@ class MockDataStoreImpl implements DataStore {
         date: new Date(),
         price: 0,
         state: OrderState.Ordering,
+        _type: "order",
+        partitionKey: (orders.length + 1).toString(),
       }
 
       orders.push(order)
@@ -64,16 +69,20 @@ class MockDataStoreImpl implements DataStore {
           postcode: "",
           state: "",
         },
+        _type: "user",
+        partitionKey: sessionId,
       }
 
       users.push(user)
       const order = {
-        id: orders.length.toString(),
+        id: (orders.length + 1).toString(),
         userId: user.id,
         items: [],
         date: new Date(),
         price: 0,
         state: OrderState.Ordering,
+        partitionKey: (orders.length + 1).toString(),
+        _type: "order",
       }
 
       orders.push(order)

@@ -1,8 +1,8 @@
-import { MenuItem } from "../../graphql/generated/types"
+import { MenuItemModel } from "../types"
 
 const baseURL = "https://loremflickr.com/320/240"
 
-const menuItems: MenuItem[] = [
+const menuItems: MenuItemModel[] = [
   {
     id: "1",
     name: "Cappuccino",
@@ -13,6 +13,8 @@ const menuItems: MenuItem[] = [
     ingredients: ["coffee", "milk"],
     notes: null,
     picture: `${baseURL}/cappuccino`,
+    partitionKey: "1",
+    _type: "menuItem",
   },
   {
     id: "2",
@@ -24,6 +26,8 @@ const menuItems: MenuItem[] = [
     ingredients: ["coffee", "milk"],
     notes: null,
     picture: `${baseURL}/latte`,
+    partitionKey: "1",
+    _type: "menuItem",
   },
   {
     id: "3",
@@ -35,6 +39,8 @@ const menuItems: MenuItem[] = [
     ingredients: ["coffee"],
     notes: null,
     picture: `${baseURL}/long%20black`,
+    partitionKey: "1",
+    _type: "menuItem",
   },
   {
     id: "4",
@@ -46,6 +52,8 @@ const menuItems: MenuItem[] = [
     ingredients: ["coffee"],
     notes: null,
     picture: `${baseURL}/short%20black`,
+    partitionKey: "1",
+    _type: "menuItem",
   },
   {
     id: "5",
@@ -57,6 +65,8 @@ const menuItems: MenuItem[] = [
     ingredients: ["flour", "blueberries"],
     notes: null,
     picture: `${baseURL}/muffin`,
+    partitionKey: "1",
+    _type: "menuItem",
   },
   {
     id: "6",
@@ -68,6 +78,8 @@ const menuItems: MenuItem[] = [
     ingredients: ["flour", "oats"],
     notes: null,
     picture: `${baseURL}/muffin`,
+    partitionKey: "1",
+    _type: "menuItem",
   },
   {
     id: "7",
@@ -79,6 +91,8 @@ const menuItems: MenuItem[] = [
     ingredients: ["flour", "butter"],
     notes: null,
     picture: `${baseURL}/croissant`,
+    partitionKey: "1",
+    _type: "menuItem",
   },
   {
     id: "8",
@@ -90,6 +104,8 @@ const menuItems: MenuItem[] = [
     ingredients: ["flour", "butter", "ham", "cheese"],
     notes: null,
     picture: `${baseURL}/croissant`,
+    partitionKey: "1",
+    _type: "menuItem",
   },
   {
     id: "9",
@@ -101,6 +117,8 @@ const menuItems: MenuItem[] = [
     ingredients: ["flour", "butter", "marmalade"],
     notes: null,
     picture: `${baseURL}/croissant`,
+    partitionKey: "1",
+    _type: "menuItem",
   },
   {
     id: "10",
@@ -112,6 +130,8 @@ const menuItems: MenuItem[] = [
     ingredients: ["gluten free bread", "marmalade"],
     notes: null,
     picture: `${baseURL}/toast%20jam`,
+    partitionKey: "1",
+    _type: "menuItem",
   },
 ]
 

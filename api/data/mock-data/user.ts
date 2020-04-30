@@ -1,6 +1,6 @@
-import { User } from "../../graphql/generated/types"
+import { UserModel } from "../types"
 
-const aaron: User = {
+const aaron: UserModel = {
   id: "aaronpowell",
   email: "aaron.powell@microsoft.com",
   name: "Aaron Powell",
@@ -9,9 +9,11 @@ const aaron: User = {
     postcode: "2000",
     state: "NSW",
   },
+  partitionKey: "aaronpowell",
+  _type: "user",
 }
 
-const jane: User = {
+const jane: UserModel = {
   id: "janedoe",
   email: "jane@email.com",
   name: "Jane Doe",
@@ -20,6 +22,8 @@ const jane: User = {
     postcode: "2000",
     state: "NSW",
   },
+  partitionKey: "janedoe",
+  _type: "user",
 }
 
 const users = [aaron, jane]
