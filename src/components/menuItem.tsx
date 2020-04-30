@@ -1,5 +1,6 @@
-import React, { useState } from "react"
+import React, { useState, useContext } from "react"
 import { MenuItemFragmentFragment } from "../graphql/generated"
+import OrderContext from "../context/OrderContext"
 
 type MenuItemProps = {
   item: MenuItemFragmentFragment
@@ -20,6 +21,7 @@ const Button: React.FC<{ onClick: () => void; title: string }> = ({
 )
 
 const MenuItem: React.FC<MenuItemProps> = ({ item }) => {
+  const { addToCart } = useContext(OrderContext)
   const [quantity, setQuantity] = useState(0)
   return (
     <div className="w-1/3 p-2 text-gray-700 object-center text-center">
@@ -34,9 +36,7 @@ const MenuItem: React.FC<MenuItemProps> = ({ item }) => {
       )}
       <div className="mt-2">
         <Button
-          onClick={(): void =>
-            quantity > 0 ? setQuantity(quantity - 1) : void 0
-          }
+          onClick={() => (quantity > 0 ? setQuantity(quantity - 1) : void 0)}
           title="Decrease quantity"
         >
           -
@@ -46,9 +46,17 @@ const MenuItem: React.FC<MenuItemProps> = ({ item }) => {
           value={quantity}
           title="Enter the quantity"
           className="m-2 border-gray-600 border-2 text-center w-1/2"
+          min={0}
+          onChange={(e) => {
+            let quantity = Number(e.target.value)
+            if (isNaN(quantity) || quantity < 0) {
+              quantity = 0
+            }
+            setQuantity(quantity)
+          }}
         />
         <Button
-          onClick={(): void => setQuantity(quantity + 1)}
+          onClick={() => setQuantity(quantity + 1)}
           title="Increase quantity"
         >
           +
@@ -58,6 +66,8 @@ const MenuItem: React.FC<MenuItemProps> = ({ item }) => {
         <button
           title="Add to order"
           className="bg-green-600 px-3 py-1 rounded-md shadow-lg text-white font-semibold uppercase tracking-wider"
+          onClick={() => addToCart(item.id, quantity)}
+          disabled={quantity === 0}
         >
           Add
         </button>

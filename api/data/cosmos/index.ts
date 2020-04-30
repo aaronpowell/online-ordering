@@ -20,6 +20,47 @@ class CosmosDataStore implements DataStore {
       .container(this.#containerName)
   }
 
+  private async getOrdersByState(userId: string, state: OrderState) {
+    const container = this.getContainer()
+    const orderUserMapping = await container.items
+      .query<{
+        orderId: string
+      }>({
+        query: `SELECT o.orderId
+                FROM o
+                WHERE o.partitionKey = @userId
+                AND   o._type = 'order/user'`,
+        parameters: [
+          {
+            name: "@userId",
+            value: userId,
+          },
+        ],
+      })
+      .fetchAll()
+
+    const orderResponse = await container.items
+      .query<OrderModel>({
+        query: `SELECT *
+                FROM o
+                WHERE ARRAY_CONTAINS(@orderIds, o.partitionKey)
+                AND o._type = 'order'
+                AND o.state = @state`,
+        parameters: [
+          {
+            name: "@orderIds",
+            value: orderUserMapping.resources.map((o) => o.orderId),
+          },
+          {
+            name: "@state",
+            value: state,
+          },
+        ],
+      })
+      .fetchAll()
+    return orderResponse.resources
+  }
+
   constructor(private client: CosmosClient) {}
 
   // Query
@@ -40,8 +81,6 @@ class CosmosDataStore implements DataStore {
         ],
       })
       .fetchAll()
-
-    console.log(`OrderId's`, orderUserMapping)
 
     const orderResponse = await container.items
       .query<OrderModel>({
@@ -163,6 +202,11 @@ class CosmosDataStore implements DataStore {
       .fetchAll()
 
     return iter.resources[0]
+  }
+
+  async currentOrderForUser(userId: string) {
+    const orders = await this.getOrdersByState(userId, OrderState.Ordering)
+    return orders[0]
   }
 
   // Mutation

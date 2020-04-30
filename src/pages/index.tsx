@@ -1,14 +1,10 @@
 import React, { useState } from "react"
-import ApolloClient from "apollo-boost"
 import { useGetMenuItemsQuery } from "../graphql/generated"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
 import Loader from "../components/loader"
 import Menu from "../components/menu"
-
-const client = new ApolloClient({
-  uri: `${process.env.GATSBY_BACKEND_URI || ""}/api/graphql`,
-})
+import { client } from "../data/apollo"
 
 const IndexPage: React.FC = () => {
   const { data, loading, fetchMore } = useGetMenuItemsQuery({

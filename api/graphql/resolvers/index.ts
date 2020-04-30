@@ -26,7 +26,11 @@ const resolvers: Resolvers = {
     user(_, { id }, { dataStore }) {
       return dataStore.user(id)
     },
+    currentOrderForUser(_, { userId }, { dataStore }) {
+      return dataStore.currentOrderForUser(userId)
+    },
   },
+
   Mutation: {
     createOrder(_, { sessionId, userId }, { dataStore }) {
       return dataStore.createOrder(userId, sessionId)

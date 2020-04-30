@@ -25,27 +25,26 @@ type Order {
 
 query findOrdersForUser($userId: ID!) {
   orders(userId: $userId) {
-    id
-    state
-    price
-    date
-    orderer {
-      id
-      name
-    }
-    items {
-      quantity
-      item {
-        id
-        name
-        price
-      }
-    }
+    ...OrderFields
   }
 }
 
+query currentOrderForUser($userId: ID!) {
+  currentOrderForUser(userId: $userId) {
+    ...OrderFields
+  }
+}
+
+
 fragment OrderFields on Order {
   id
+  state
+  price
+  date
+  orderer {
+    id
+    name
+  }
   items {
     quantity
     item {
@@ -54,13 +53,20 @@ fragment OrderFields on Order {
       price
     }
   }
-  state
-  price
-  date
 }
 
 mutation createOrder($userId: ID, $sessionId: ID) {
   createOrder(userId: $userId, sessionId: $sessionId) {
+    ...OrderFields
+  }
+}
+
+mutation addItemToOrder($orderId: ID!, $menuItemId: ID!, $quantity: Int!) {
+  addItemToOrder(
+    orderId: $orderId
+    menuItemId: $menuItemId
+    quantity: $quantity
+  ) {
     ...OrderFields
   }
 }

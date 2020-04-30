@@ -8,6 +8,7 @@ export interface DataStore {
   menuItem(id: string): Promise<MenuItemModel>
   user(userId: string): Promise<UserModel>
   menuItemsByIds(ids: string[]): Promise<MenuItemModel[]>
+  currentOrderForUser(userId: string): Promise<OrderModel>
 
   // Mutate
   createOrder(

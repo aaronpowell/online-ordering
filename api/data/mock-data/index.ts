@@ -29,6 +29,11 @@ class MockDataStoreImpl implements DataStore {
   menuItemsByIds(ids: string[]) {
     return Promise.resolve(menuItems.filter((m) => ids.indexOf(m.id) >= 0))
   }
+  currentOrderForUser(userId: string) {
+    return Promise.resolve(
+      orders.find((o) => o.userId === userId && o.state === OrderState.Ordering)
+    )
+  }
 
   // Mutation
   createOrder(userId: string, sessionId: string) {

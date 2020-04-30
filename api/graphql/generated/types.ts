@@ -84,10 +84,15 @@ export enum OrderState {
 
 export type Query = {
   __typename?: "Query"
+  currentOrderForUser: Maybe<Order>
   menu: Maybe<Array<MenuItem>>
   order: Maybe<Order>
   orders: Array<Order>
   user: Maybe<User>
+}
+
+export type QueryCurrentOrderForUserArgs = {
+  userId: Scalars["ID"]
 }
 
 export type QueryMenuArgs = {
@@ -226,17 +231,17 @@ export type DirectiveResolverFn<
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
   Query: ResolverTypeWrapper<{}>
-  Int: ResolverTypeWrapper<Scalars["Int"]>
-  MenuItem: ResolverTypeWrapper<MenuItemModel>
-  String: ResolverTypeWrapper<Scalars["String"]>
-  Boolean: ResolverTypeWrapper<Scalars["Boolean"]>
   ID: ResolverTypeWrapper<Scalars["ID"]>
-  Float: ResolverTypeWrapper<Scalars["Float"]>
   Order: ResolverTypeWrapper<OrderModel>
   DateTime: ResolverTypeWrapper<Scalars["DateTime"]>
   OrderItem: ResolverTypeWrapper<
     Omit<OrderItem, "item"> & { item: ResolversTypes["MenuItem"] }
   >
+  Int: ResolverTypeWrapper<Scalars["Int"]>
+  MenuItem: ResolverTypeWrapper<MenuItemModel>
+  String: ResolverTypeWrapper<Scalars["String"]>
+  Boolean: ResolverTypeWrapper<Scalars["Boolean"]>
+  Float: ResolverTypeWrapper<Scalars["Float"]>
   User: ResolverTypeWrapper<UserModel>
   Address: ResolverTypeWrapper<Address>
   OrderState: OrderState
@@ -246,17 +251,17 @@ export type ResolversTypes = ResolversObject<{
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
   Query: {}
-  Int: Scalars["Int"]
-  MenuItem: MenuItemModel
-  String: Scalars["String"]
-  Boolean: Scalars["Boolean"]
   ID: Scalars["ID"]
-  Float: Scalars["Float"]
   Order: OrderModel
   DateTime: Scalars["DateTime"]
   OrderItem: Omit<OrderItem, "item"> & {
     item: ResolversParentTypes["MenuItem"]
   }
+  Int: Scalars["Int"]
+  MenuItem: MenuItemModel
+  String: Scalars["String"]
+  Boolean: Scalars["Boolean"]
+  Float: Scalars["Float"]
   User: UserModel
   Address: Address
   OrderState: OrderState
@@ -345,6 +350,12 @@ export type QueryResolvers<
   ContextType = ResolverContext,
   ParentType extends ResolversParentTypes["Query"] = ResolversParentTypes["Query"]
 > = ResolversObject<{
+  currentOrderForUser: Resolver<
+    Maybe<ResolversTypes["Order"]>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryCurrentOrderForUserArgs, "userId">
+  >
   menu: Resolver<
     Maybe<Array<ResolversTypes["MenuItem"]>>,
     ParentType,
@@ -423,28 +434,22 @@ export type FindOrdersForUserQueryVariables = {
 }
 
 export type FindOrdersForUserQuery = { __typename?: "Query" } & {
-  orders: Array<
-    { __typename?: "Order" } & Pick<
-      Order,
-      "id" | "state" | "price" | "date"
-    > & {
-        orderer: { __typename?: "User" } & Pick<User, "id" | "name">
-        items: Array<
-          { __typename?: "OrderItem" } & Pick<OrderItem, "quantity"> & {
-              item: { __typename?: "MenuItem" } & Pick<
-                MenuItem,
-                "id" | "name" | "price"
-              >
-            }
-        >
-      }
-  >
+  orders: Array<{ __typename?: "Order" } & OrderFieldsFragment>
+}
+
+export type CurrentOrderForUserQueryVariables = {
+  userId: Scalars["ID"]
+}
+
+export type CurrentOrderForUserQuery = { __typename?: "Query" } & {
+  currentOrderForUser: Maybe<{ __typename?: "Order" } & OrderFieldsFragment>
 }
 
 export type OrderFieldsFragment = { __typename?: "Order" } & Pick<
   Order,
   "id" | "state" | "price" | "date"
 > & {
+    orderer: { __typename?: "User" } & Pick<User, "id" | "name">
     items: Array<
       { __typename?: "OrderItem" } & Pick<OrderItem, "quantity"> & {
           item: { __typename?: "MenuItem" } & Pick<
@@ -462,4 +467,14 @@ export type CreateOrderMutationVariables = {
 
 export type CreateOrderMutation = { __typename?: "Mutation" } & {
   createOrder: Maybe<{ __typename?: "Order" } & OrderFieldsFragment>
+}
+
+export type AddItemToOrderMutationVariables = {
+  orderId: Scalars["ID"]
+  menuItemId: Scalars["ID"]
+  quantity: Scalars["Int"]
+}
+
+export type AddItemToOrderMutation = { __typename?: "Mutation" } & {
+  addItemToOrder: Maybe<{ __typename?: "Order" } & OrderFieldsFragment>
 }

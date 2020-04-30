@@ -75,10 +75,15 @@ export enum OrderState {
 
 export type Query = {
   __typename?: "Query"
+  currentOrderForUser?: Maybe<Order>
   menu?: Maybe<Array<MenuItem>>
   order?: Maybe<Order>
   orders: Array<Order>
   user?: Maybe<User>
+}
+
+export type QueryCurrentOrderForUserArgs = {
+  userId: Scalars["ID"]
 }
 
 export type QueryMenuArgs = {
@@ -119,6 +124,13 @@ export const MenuItemFragmentFragmentDoc = gql`
 export const OrderFieldsFragmentDoc = gql`
   fragment OrderFields on Order {
     id
+    state
+    price
+    date
+    orderer {
+      id
+      name
+    }
     items {
       quantity
       item {
@@ -127,9 +139,6 @@ export const OrderFieldsFragmentDoc = gql`
         price
       }
     }
-    state
-    price
-    date
   }
 `
 export const GetMenuItemsDocument = gql`
@@ -192,24 +201,10 @@ export type GetMenuItemsQueryResult = ApolloReactCommon.QueryResult<
 export const FindOrdersForUserDocument = gql`
   query findOrdersForUser($userId: ID!) {
     orders(userId: $userId) {
-      id
-      state
-      price
-      date
-      orderer {
-        id
-        name
-      }
-      items {
-        quantity
-        item {
-          id
-          name
-          price
-        }
-      }
+      ...OrderFields
     }
   }
+  ${OrderFieldsFragmentDoc}
 `
 
 /**
@@ -259,6 +254,63 @@ export type FindOrdersForUserLazyQueryHookResult = ReturnType<
 export type FindOrdersForUserQueryResult = ApolloReactCommon.QueryResult<
   FindOrdersForUserQuery,
   FindOrdersForUserQueryVariables
+>
+export const CurrentOrderForUserDocument = gql`
+  query currentOrderForUser($userId: ID!) {
+    currentOrderForUser(userId: $userId) {
+      ...OrderFields
+    }
+  }
+  ${OrderFieldsFragmentDoc}
+`
+
+/**
+ * __useCurrentOrderForUserQuery__
+ *
+ * To run a query within a React component, call `useCurrentOrderForUserQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCurrentOrderForUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCurrentOrderForUserQuery({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useCurrentOrderForUserQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    CurrentOrderForUserQuery,
+    CurrentOrderForUserQueryVariables
+  >
+) {
+  return ApolloReactHooks.useQuery<
+    CurrentOrderForUserQuery,
+    CurrentOrderForUserQueryVariables
+  >(CurrentOrderForUserDocument, baseOptions)
+}
+export function useCurrentOrderForUserLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    CurrentOrderForUserQuery,
+    CurrentOrderForUserQueryVariables
+  >
+) {
+  return ApolloReactHooks.useLazyQuery<
+    CurrentOrderForUserQuery,
+    CurrentOrderForUserQueryVariables
+  >(CurrentOrderForUserDocument, baseOptions)
+}
+export type CurrentOrderForUserQueryHookResult = ReturnType<
+  typeof useCurrentOrderForUserQuery
+>
+export type CurrentOrderForUserLazyQueryHookResult = ReturnType<
+  typeof useCurrentOrderForUserLazyQuery
+>
+export type CurrentOrderForUserQueryResult = ApolloReactCommon.QueryResult<
+  CurrentOrderForUserQuery,
+  CurrentOrderForUserQueryVariables
 >
 export const CreateOrderDocument = gql`
   mutation createOrder($userId: ID, $sessionId: ID) {
@@ -312,6 +364,63 @@ export type CreateOrderMutationOptions = ApolloReactCommon.BaseMutationOptions<
   CreateOrderMutation,
   CreateOrderMutationVariables
 >
+export const AddItemToOrderDocument = gql`
+  mutation addItemToOrder($orderId: ID!, $menuItemId: ID!, $quantity: Int!) {
+    addItemToOrder(
+      orderId: $orderId
+      menuItemId: $menuItemId
+      quantity: $quantity
+    ) {
+      ...OrderFields
+    }
+  }
+  ${OrderFieldsFragmentDoc}
+`
+export type AddItemToOrderMutationFn = ApolloReactCommon.MutationFunction<
+  AddItemToOrderMutation,
+  AddItemToOrderMutationVariables
+>
+
+/**
+ * __useAddItemToOrderMutation__
+ *
+ * To run a mutation, you first call `useAddItemToOrderMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddItemToOrderMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addItemToOrderMutation, { data, loading, error }] = useAddItemToOrderMutation({
+ *   variables: {
+ *      orderId: // value for 'orderId'
+ *      menuItemId: // value for 'menuItemId'
+ *      quantity: // value for 'quantity'
+ *   },
+ * });
+ */
+export function useAddItemToOrderMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    AddItemToOrderMutation,
+    AddItemToOrderMutationVariables
+  >
+) {
+  return ApolloReactHooks.useMutation<
+    AddItemToOrderMutation,
+    AddItemToOrderMutationVariables
+  >(AddItemToOrderDocument, baseOptions)
+}
+export type AddItemToOrderMutationHookResult = ReturnType<
+  typeof useAddItemToOrderMutation
+>
+export type AddItemToOrderMutationResult = ApolloReactCommon.MutationResult<
+  AddItemToOrderMutation
+>
+export type AddItemToOrderMutationOptions = ApolloReactCommon.BaseMutationOptions<
+  AddItemToOrderMutation,
+  AddItemToOrderMutationVariables
+>
 export type GetMenuItemsQueryVariables = {
   offset?: Maybe<Scalars["Int"]>
 }
@@ -336,28 +445,22 @@ export type FindOrdersForUserQueryVariables = {
 }
 
 export type FindOrdersForUserQuery = { __typename?: "Query" } & {
-  orders: Array<
-    { __typename?: "Order" } & Pick<
-      Order,
-      "id" | "state" | "price" | "date"
-    > & {
-        orderer: { __typename?: "User" } & Pick<User, "id" | "name">
-        items: Array<
-          { __typename?: "OrderItem" } & Pick<OrderItem, "quantity"> & {
-              item: { __typename?: "MenuItem" } & Pick<
-                MenuItem,
-                "id" | "name" | "price"
-              >
-            }
-        >
-      }
-  >
+  orders: Array<{ __typename?: "Order" } & OrderFieldsFragment>
+}
+
+export type CurrentOrderForUserQueryVariables = {
+  userId: Scalars["ID"]
+}
+
+export type CurrentOrderForUserQuery = { __typename?: "Query" } & {
+  currentOrderForUser?: Maybe<{ __typename?: "Order" } & OrderFieldsFragment>
 }
 
 export type OrderFieldsFragment = { __typename?: "Order" } & Pick<
   Order,
   "id" | "state" | "price" | "date"
 > & {
+    orderer: { __typename?: "User" } & Pick<User, "id" | "name">
     items: Array<
       { __typename?: "OrderItem" } & Pick<OrderItem, "quantity"> & {
           item: { __typename?: "MenuItem" } & Pick<
@@ -375,4 +478,14 @@ export type CreateOrderMutationVariables = {
 
 export type CreateOrderMutation = { __typename?: "Mutation" } & {
   createOrder?: Maybe<{ __typename?: "Order" } & OrderFieldsFragment>
+}
+
+export type AddItemToOrderMutationVariables = {
+  orderId: Scalars["ID"]
+  menuItemId: Scalars["ID"]
+  quantity: Scalars["Int"]
+}
+
+export type AddItemToOrderMutation = { __typename?: "Mutation" } & {
+  addItemToOrder?: Maybe<{ __typename?: "Order" } & OrderFieldsFragment>
 }
