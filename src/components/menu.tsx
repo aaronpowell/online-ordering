@@ -12,7 +12,7 @@ const Menu: React.FC<MenuProps> = ({ menu, onLoadMore, hasMore }) => (
   <div>
     <h2>Menu</h2>
     <div className="flex flex-wrap content-center">
-      {menu.map(item => (
+      {menu.map((item) => (
         <MenuItem key={item.id} item={item} />
       ))}
     </div>
