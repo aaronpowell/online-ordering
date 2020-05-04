@@ -10,7 +10,6 @@ import {
   useCreateOrderMutation,
   useAddItemToOrderMutation,
   useCurrentOrderForUserLazyQuery,
-  useCurrentOrderForUserQuery,
 } from "../graphql/generated"
 import { client } from "../data/apollo"
 
@@ -46,7 +45,7 @@ const Layout: React.FC = ({ children }) => {
         },
       })
     }
-  }, [])
+  }, [order, getCurrentOrder, sessionId])
 
   useEffect(() => {
     if (currentOrderResponse.data?.currentOrderForUser) {
@@ -58,7 +57,7 @@ const Layout: React.FC = ({ children }) => {
     <OrderContext.Provider
       value={{
         sessionId,
-        orderId: order ? order.id : undefined,
+        order,
         addToCart: async (menuItemId, quantity) => {
           let mutatingOrder = order
           if (!mutatingOrder) {
@@ -87,7 +86,6 @@ const Layout: React.FC = ({ children }) => {
 
           if (!addResponse.errors && addResponse.data?.addItemToOrder) {
             setOrder(addResponse.data.addItemToOrder)
-            console.log(addResponse.data.addItemToOrder)
           } else {
             console.error(addResponse)
           }

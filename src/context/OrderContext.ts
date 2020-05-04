@@ -4,7 +4,7 @@ import { OrderFieldsFragment } from "../graphql/generated"
 
 export type CartContextType = {
   addToCart: (itemId: string, quantity: number) => Promise<void>
-  orderId?: string
+  order?: OrderFieldsFragment
   userId?: string
   sessionId: string
 }
