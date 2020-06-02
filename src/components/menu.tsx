@@ -10,7 +10,7 @@ type MenuProps = {
 
 const Menu: React.FC<MenuProps> = ({ menu, onLoadMore, hasMore }) => (
   <div>
-    <h2>Menu</h2>
+    <h2 className="text-center text-2xl font-semibold">Menu</h2>
     <div className="flex flex-wrap content-center">
       {menu.map((item) => (
         <MenuItem key={item.id} item={item} />
