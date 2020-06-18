@@ -3,6 +3,7 @@ type User {
   email: String!
   name: String!
   address: Address
+  phone: String
 }
 
 type Address {

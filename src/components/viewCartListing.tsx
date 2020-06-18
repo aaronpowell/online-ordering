@@ -1,5 +1,6 @@
 import React from "react"
 import { OrderFieldsFragment } from "../graphql/generated"
+import { formatPrice } from "../numberUtils"
 type ViewCartListingProps = {
   order: OrderFieldsFragment
 }
@@ -37,7 +38,7 @@ const ViewCartListing: React.FC<ViewCartListingProps> = ({ order }) => {
                 {lineItem.quantity}
               </td>
               <td className="border px-4 py-2 bg-green-200 text-center">
-                ${lineItem.quantity * lineItem.item.price}
+                {formatPrice(lineItem.quantity * lineItem.item.price)}
               </td>
             </tr>
           ))}
@@ -46,7 +47,9 @@ const ViewCartListing: React.FC<ViewCartListingProps> = ({ order }) => {
         <th colSpan={3} className="border px-4 py-2 text-right">
           Order Total:
         </th>
-        <th className="border px-4 py-2 bg-green-300">${order.price}</th>
+        <th className="border px-4 py-2 bg-green-300">
+          {formatPrice(order.price)}
+        </th>
       </tfoot>
     </table>
   )

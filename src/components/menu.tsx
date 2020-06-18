@@ -1,6 +1,7 @@
 import React from "react"
 import { MenuItemFragmentFragment } from "../graphql/generated"
 import MenuItem from "./menuItem"
+import Title from "./title"
 
 type MenuProps = {
   menu: MenuItemFragmentFragment[]
@@ -10,7 +11,7 @@ type MenuProps = {
 
 const Menu: React.FC<MenuProps> = ({ menu, onLoadMore, hasMore }) => (
   <div>
-    <h2 className="text-center text-2xl font-semibold">Menu</h2>
+    <Title title="Menu" />
     <div className="flex flex-wrap content-center">
       {menu.map((item) => (
         <MenuItem key={item.id} item={item} />

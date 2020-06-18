@@ -236,6 +236,7 @@ class CosmosDataStore implements DataStore {
           },
           partitionKey: sessionId,
           _type: "user",
+          phone: "",
         })
 
       user = resource

@@ -76,6 +76,7 @@ class MockDataStoreImpl implements DataStore {
         },
         _type: "user",
         partitionKey: sessionId,
+        phone: "",
       }
 
       users.push(user)

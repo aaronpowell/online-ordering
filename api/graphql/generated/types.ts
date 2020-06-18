@@ -117,6 +117,7 @@ export type User = {
   email: Scalars["String"]
   id: Scalars["ID"]
   name: Scalars["String"]
+  phone: Maybe<Scalars["String"]>
 }
 
 export type WithIndex<TObject> = TObject & Record<string, any>
@@ -390,6 +391,7 @@ export type UserResolvers<
   email: Resolver<ResolversTypes["String"], ParentType, ContextType>
   id: Resolver<ResolversTypes["ID"], ParentType, ContextType>
   name: Resolver<ResolversTypes["String"], ParentType, ContextType>
+  phone: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>
   __isTypeOf?: isTypeOfResolverFn<ParentType>
 }>
 

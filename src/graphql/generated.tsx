@@ -108,6 +108,7 @@ export type User = {
   email: Scalars["String"]
   id: Scalars["ID"]
   name: Scalars["String"]
+  phone?: Maybe<Scalars["String"]>
 }
 
 export const MenuItemFragmentFragmentDoc = gql`

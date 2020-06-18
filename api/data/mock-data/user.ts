@@ -11,6 +11,7 @@ const aaron: UserModel = {
   },
   partitionKey: "aaronpowell",
   _type: "user",
+  phone: "",
 }
 
 const jane: UserModel = {
@@ -24,6 +25,7 @@ const jane: UserModel = {
   },
   partitionKey: "janedoe",
   _type: "user",
+  phone: "",
 }
 
 const users = [aaron, jane]
