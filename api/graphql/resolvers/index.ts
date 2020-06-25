@@ -38,6 +38,9 @@ const resolvers: Resolvers = {
     addItemToOrder(_, { orderId, menuItemId, quantity }, { dataStore }) {
       return dataStore.addItemToOrder(orderId, menuItemId, quantity)
     },
+    submitOrder(_, { orderId, user }, { dataStore }) {
+      return dataStore.submitOrder(orderId, user)
+    },
   },
 
   Order: {

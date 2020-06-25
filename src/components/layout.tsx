@@ -4,7 +4,7 @@ import { useStaticQuery, graphql } from "gatsby"
 import "./layout.css"
 import Header from "./header"
 import OrderContext from "../context/OrderContext"
-import getSession from "../data/session"
+import { getSession, destroySession } from "../data/session"
 import {
   OrderFieldsFragment,
   useCreateOrderMutation,
@@ -90,6 +90,7 @@ const Layout: React.FC = ({ children }) => {
             console.error(addResponse)
           }
         },
+        endSession: destroySession,
       }}
     >
       <Header siteTitle={data.site.siteMetadata.title} />

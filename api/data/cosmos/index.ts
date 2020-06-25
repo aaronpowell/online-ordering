@@ -1,6 +1,6 @@
 import { DataStore } from "../DataStore"
 import { CosmosClient } from "@azure/cosmos"
-import { OrderState } from "../../graphql/generated/types"
+import { OrderState, UserInput } from "../../graphql/generated/types"
 import { UserInputError } from "apollo-server-azure-functions"
 import { v4 as uuid } from "uuid"
 import {
@@ -14,14 +14,14 @@ class CosmosDataStore implements DataStore {
   #databaseName = "OnlineOrdering"
   #containerName = "Ordering"
 
-  private getContainer() {
+  #getContainer = () => {
     return this.client
       .database(this.#databaseName)
       .container(this.#containerName)
   }
 
-  private async getOrdersByState(userId: string, state: OrderState) {
-    const container = this.getContainer()
+  #getOrdersByState = async (userId: string, state: OrderState) => {
+    const container = this.#getContainer()
     const orderUserMapping = await container.items
       .query<{
         orderId: string
@@ -65,7 +65,7 @@ class CosmosDataStore implements DataStore {
 
   // Query
   async orders(userId: string) {
-    const container = this.getContainer()
+    const container = this.#getContainer()
 
     const orderUserMapping = await container.items
       .query<{ orderId: string }>({
@@ -112,7 +112,7 @@ class CosmosDataStore implements DataStore {
       ],
     }
 
-    const iter = await this.getContainer()
+    const iter = await this.#getContainer()
       .items.query<OrderModel>(query)
       .fetchAll()
 
@@ -138,7 +138,7 @@ class CosmosDataStore implements DataStore {
       ],
     }
 
-    const iter = await this.getContainer()
+    const iter = await this.#getContainer()
       .items.query<MenuItemModel>(query)
       .fetchAll()
 
@@ -157,7 +157,7 @@ class CosmosDataStore implements DataStore {
       ],
     }
 
-    const iter = await this.getContainer()
+    const iter = await this.#getContainer()
       .items.query<MenuItemModel>(query)
       .fetchAll()
 
@@ -165,7 +165,7 @@ class CosmosDataStore implements DataStore {
   }
 
   async menuItemsByIds(ids: string[]) {
-    const menuItemsResponse = await this.getContainer()
+    const menuItemsResponse = await this.#getContainer()
       .items.query<MenuItemModel>({
         query: `SELECT *
                 FROM mi
@@ -197,7 +197,7 @@ class CosmosDataStore implements DataStore {
       ],
     }
 
-    const iter = await this.getContainer()
+    const iter = await this.#getContainer()
       .items.query<UserModel>(query)
       .fetchAll()
 
@@ -205,7 +205,7 @@ class CosmosDataStore implements DataStore {
   }
 
   async currentOrderForUser(userId: string) {
-    const orders = await this.getOrdersByState(userId, OrderState.Ordering)
+    const orders = await this.#getOrdersByState(userId, OrderState.Ordering)
     return orders[0]
   }
 
@@ -247,7 +247,7 @@ class CosmosDataStore implements DataStore {
     }
 
     const orderId = uuid()
-    const { resource } = await this.getContainer().items.create<OrderModel>({
+    const { resource } = await this.#getContainer().items.create<OrderModel>({
       id: orderId,
       date: new Date(),
       userId: user.id,
@@ -258,7 +258,7 @@ class CosmosDataStore implements DataStore {
       partitionKey: orderId,
     })
 
-    await this.getContainer().items.create<OrderUserMapping>({
+    await this.#getContainer().items.create<OrderUserMapping>({
       id: uuid(),
       _type: "order/user",
       partitionKey: user.id,
@@ -295,9 +295,34 @@ class CosmosDataStore implements DataStore {
       0
     )
 
-    const response = await this.getContainer()
+    const response = await this.#getContainer()
       .item(order.id, order.partitionKey)
       .replace(order)
+
+    return response.resource
+  }
+
+  async submitOrder(
+    orderId: string,
+    inputUser: UserInput
+  ): Promise<OrderModel> {
+    const order = await this.order(orderId)
+
+    if (!order) {
+      throw new UserInputError("Order doesn't exist in system")
+    }
+
+    order.state = OrderState.Placed
+    const response = await this.#getContainer()
+      .item(order.id, order.partitionKey)
+      .replace(order)
+
+    const user = await this.user(order.userId)
+    user.name = inputUser.name
+    user.email = inputUser.email
+    user.phone = inputUser.phone
+    user.address = inputUser.address
+    await this.#getContainer().item(user.id, user.partitionKey).replace(user)
 
     return response.resource
   }

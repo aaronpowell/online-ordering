@@ -2,7 +2,7 @@ import { menuItems } from "./menu"
 import { orders } from "./order"
 import { users } from "./user"
 import { DataStore } from "../DataStore"
-import { OrderState } from "../../graphql/generated/types"
+import { OrderState, UserInput } from "../../graphql/generated/types"
 import { UserInputError } from "apollo-server-azure-functions"
 
 const itemsPerPage = 5
@@ -132,6 +132,31 @@ class MockDataStoreImpl implements DataStore {
       (price, item) => (price += item.price * quantity),
       0
     )
+
+    return Promise.resolve(order)
+  }
+
+  submitOrder(orderId: string, inputUser: UserInput) {
+    const order = orders.find((o) => o.id === orderId)
+
+    if (!order) {
+      throw new UserInputError("The order was not found in the system")
+    }
+
+    if (order.state !== OrderState.Ordering) {
+      throw new UserInputError(
+        "The order has passed the ordering phase and can't have new items added to it"
+      )
+    }
+
+    order.state = OrderState.Placed
+
+    const user = users.find((u) => u.id === order.userId)
+
+    user.name = inputUser.name
+    user.email = inputUser.email
+    user.phone = inputUser.phone
+    user.address = inputUser.address
 
     return Promise.resolve(order)
   }

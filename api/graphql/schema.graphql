@@ -20,4 +20,5 @@ type Query {
 type Mutation {
   createOrder(userId: ID, sessionId: ID): Order
   addItemToOrder(orderId: ID!, menuItemId: ID!, quantity: Int!): Order
+  submitOrder(orderId: ID, user: UserInput!): Order
 }

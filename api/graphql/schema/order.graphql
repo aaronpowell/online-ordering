@@ -35,7 +35,6 @@ query currentOrderForUser($userId: ID!) {
   }
 }
 
-
 fragment OrderFields on Order {
   id
   state
@@ -67,6 +66,12 @@ mutation addItemToOrder($orderId: ID!, $menuItemId: ID!, $quantity: Int!) {
     menuItemId: $menuItemId
     quantity: $quantity
   ) {
+    ...OrderFields
+  }
+}
+
+mutation submitOrder($orderId: ID, $user: UserInput!) {
+  submitOrder(orderId: $orderId, user: $user) {
     ...OrderFields
   }
 }

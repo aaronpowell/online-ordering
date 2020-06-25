@@ -28,6 +28,12 @@ export type Address = {
   postcode: Scalars["String"]
 }
 
+export type AddressInput = {
+  address: Scalars["String"]
+  state: Scalars["String"]
+  postcode: Scalars["String"]
+}
+
 export type MenuItem = {
   __typename?: "MenuItem"
   description: Scalars["String"]
@@ -45,6 +51,7 @@ export type Mutation = {
   __typename?: "Mutation"
   addItemToOrder: Maybe<Order>
   createOrder: Maybe<Order>
+  submitOrder: Maybe<Order>
 }
 
 export type MutationAddItemToOrderArgs = {
@@ -56,6 +63,11 @@ export type MutationAddItemToOrderArgs = {
 export type MutationCreateOrderArgs = {
   userId: Maybe<Scalars["ID"]>
   sessionId: Maybe<Scalars["ID"]>
+}
+
+export type MutationSubmitOrderArgs = {
+  orderId: Maybe<Scalars["ID"]>
+  user: UserInput
 }
 
 export type Order = {
@@ -117,6 +129,13 @@ export type User = {
   email: Scalars["String"]
   id: Scalars["ID"]
   name: Scalars["String"]
+  phone: Maybe<Scalars["String"]>
+}
+
+export type UserInput = {
+  email: Scalars["String"]
+  name: Scalars["String"]
+  address: Maybe<AddressInput>
   phone: Maybe<Scalars["String"]>
 }
 
@@ -247,6 +266,8 @@ export type ResolversTypes = ResolversObject<{
   Address: ResolverTypeWrapper<Address>
   OrderState: OrderState
   Mutation: ResolverTypeWrapper<{}>
+  UserInput: UserInput
+  AddressInput: AddressInput
 }>
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -267,6 +288,8 @@ export type ResolversParentTypes = ResolversObject<{
   Address: Address
   OrderState: OrderState
   Mutation: {}
+  UserInput: UserInput
+  AddressInput: AddressInput
 }>
 
 export type AddressResolvers<
@@ -322,6 +345,12 @@ export type MutationResolvers<
     ParentType,
     ContextType,
     RequireFields<MutationCreateOrderArgs, never>
+  >
+  submitOrder: Resolver<
+    Maybe<ResolversTypes["Order"]>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationSubmitOrderArgs, "user">
   >
 }>
 
@@ -479,4 +508,13 @@ export type AddItemToOrderMutationVariables = {
 
 export type AddItemToOrderMutation = { __typename?: "Mutation" } & {
   addItemToOrder: Maybe<{ __typename?: "Order" } & OrderFieldsFragment>
+}
+
+export type SubmitOrderMutationVariables = {
+  orderId: Maybe<Scalars["ID"]>
+  user: UserInput
+}
+
+export type SubmitOrderMutation = { __typename?: "Mutation" } & {
+  submitOrder: Maybe<{ __typename?: "Order" } & OrderFieldsFragment>
 }

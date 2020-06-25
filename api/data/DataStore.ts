@@ -1,4 +1,5 @@
 import { OrderModel, UserModel, MenuItemModel } from "./types"
+import { UserInput } from "../graphql/generated/types"
 
 export interface DataStore {
   // Query
@@ -20,6 +21,7 @@ export interface DataStore {
     menuItemId: string,
     quantity: number
   ): Promise<OrderModel>
+  submitOrder(orderId: string, user: UserInput): Promise<OrderModel>
 }
 
 export type ResolverContext = {

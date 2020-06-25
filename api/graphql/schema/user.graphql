@@ -11,3 +11,16 @@ type Address {
   state: String!
   postcode: String!
 }
+
+input UserInput {
+  email: String!
+  name: String!
+  address: AddressInput
+  phone: String
+}
+
+input AddressInput {
+  address: String!
+  state: String!
+  postcode: String!
+}

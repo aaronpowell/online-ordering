@@ -19,6 +19,12 @@ export type Address = {
   postcode: Scalars["String"]
 }
 
+export type AddressInput = {
+  address: Scalars["String"]
+  state: Scalars["String"]
+  postcode: Scalars["String"]
+}
+
 export type MenuItem = {
   __typename?: "MenuItem"
   description: Scalars["String"]
@@ -36,6 +42,7 @@ export type Mutation = {
   __typename?: "Mutation"
   addItemToOrder?: Maybe<Order>
   createOrder?: Maybe<Order>
+  submitOrder?: Maybe<Order>
 }
 
 export type MutationAddItemToOrderArgs = {
@@ -47,6 +54,11 @@ export type MutationAddItemToOrderArgs = {
 export type MutationCreateOrderArgs = {
   userId?: Maybe<Scalars["ID"]>
   sessionId?: Maybe<Scalars["ID"]>
+}
+
+export type MutationSubmitOrderArgs = {
+  orderId?: Maybe<Scalars["ID"]>
+  user: UserInput
 }
 
 export type Order = {
@@ -108,6 +120,13 @@ export type User = {
   email: Scalars["String"]
   id: Scalars["ID"]
   name: Scalars["String"]
+  phone?: Maybe<Scalars["String"]>
+}
+
+export type UserInput = {
+  email: Scalars["String"]
+  name: Scalars["String"]
+  address?: Maybe<AddressInput>
   phone?: Maybe<Scalars["String"]>
 }
 
@@ -422,6 +441,58 @@ export type AddItemToOrderMutationOptions = ApolloReactCommon.BaseMutationOption
   AddItemToOrderMutation,
   AddItemToOrderMutationVariables
 >
+export const SubmitOrderDocument = gql`
+  mutation submitOrder($orderId: ID, $user: UserInput!) {
+    submitOrder(orderId: $orderId, user: $user) {
+      ...OrderFields
+    }
+  }
+  ${OrderFieldsFragmentDoc}
+`
+export type SubmitOrderMutationFn = ApolloReactCommon.MutationFunction<
+  SubmitOrderMutation,
+  SubmitOrderMutationVariables
+>
+
+/**
+ * __useSubmitOrderMutation__
+ *
+ * To run a mutation, you first call `useSubmitOrderMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSubmitOrderMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [submitOrderMutation, { data, loading, error }] = useSubmitOrderMutation({
+ *   variables: {
+ *      orderId: // value for 'orderId'
+ *      user: // value for 'user'
+ *   },
+ * });
+ */
+export function useSubmitOrderMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    SubmitOrderMutation,
+    SubmitOrderMutationVariables
+  >
+) {
+  return ApolloReactHooks.useMutation<
+    SubmitOrderMutation,
+    SubmitOrderMutationVariables
+  >(SubmitOrderDocument, baseOptions)
+}
+export type SubmitOrderMutationHookResult = ReturnType<
+  typeof useSubmitOrderMutation
+>
+export type SubmitOrderMutationResult = ApolloReactCommon.MutationResult<
+  SubmitOrderMutation
+>
+export type SubmitOrderMutationOptions = ApolloReactCommon.BaseMutationOptions<
+  SubmitOrderMutation,
+  SubmitOrderMutationVariables
+>
 export type GetMenuItemsQueryVariables = {
   offset?: Maybe<Scalars["Int"]>
 }
@@ -489,4 +560,13 @@ export type AddItemToOrderMutationVariables = {
 
 export type AddItemToOrderMutation = { __typename?: "Mutation" } & {
   addItemToOrder?: Maybe<{ __typename?: "Order" } & OrderFieldsFragment>
+}
+
+export type SubmitOrderMutationVariables = {
+  orderId?: Maybe<Scalars["ID"]>
+  user: UserInput
+}
+
+export type SubmitOrderMutation = { __typename?: "Mutation" } & {
+  submitOrder?: Maybe<{ __typename?: "Order" } & OrderFieldsFragment>
 }
