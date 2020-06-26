@@ -11,6 +11,7 @@ import {
   useAddItemToOrderMutation,
   useCurrentOrderForUserLazyQuery,
 } from "../graphql/generated"
+import { ApolloProvider } from "@apollo/react-hooks"
 import { client } from "../data/apollo"
 
 const Layout: React.FC = ({ children }) => {
@@ -27,15 +28,13 @@ const Layout: React.FC = ({ children }) => {
   const sessionId = getSession()
 
   const [order, setOrder] = useState<OrderFieldsFragment>()
-  const [createOrder] = useCreateOrderMutation({ client })
-  const [addToCart] = useAddItemToOrderMutation({ client })
+  const [createOrder] = useCreateOrderMutation()
+  const [addToCart] = useAddItemToOrderMutation()
 
   const [
     getCurrentOrder,
     currentOrderResponse,
-  ] = useCurrentOrderForUserLazyQuery({
-    client,
-  })
+  ] = useCurrentOrderForUserLazyQuery()
 
   useEffect(() => {
     if (!order) {
@@ -110,4 +109,12 @@ Layout.propTypes = {
   children: PropTypes.node.isRequired,
 }
 
-export default Layout
+const ApolloLayout: React.FC = ({ children }) => {
+  return (
+    <ApolloProvider client={client}>
+      <Layout>{children}</Layout>
+    </ApolloProvider>
+  )
+}
+
+export default ApolloLayout

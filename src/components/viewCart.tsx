@@ -8,7 +8,6 @@ import {
   OrderFieldsFragment,
 } from "../graphql/generated"
 import { navigate } from "gatsby"
-import { client } from "../data/apollo"
 
 enum ShippingOption {
   PickUp = "pickup",
@@ -100,7 +99,7 @@ const createPaymentRequest = (order: OrderFieldsFragment) => {
 const ViewCart: React.FC = () => {
   const { order, endSession } = useContext(OrderContext)
   const [requestingPayment, setRequestingPayment] = useState(false)
-  const [submitOrder] = useSubmitOrderMutation({ client })
+  const [submitOrder] = useSubmitOrderMutation()
 
   useEffect(() => {
     async function process() {

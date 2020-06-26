@@ -44,12 +44,14 @@ const ViewCartListing: React.FC<ViewCartListingProps> = ({ order }) => {
           ))}
       </tbody>
       <tfoot>
-        <th colSpan={3} className="border px-4 py-2 text-right">
-          Order Total:
-        </th>
-        <th className="border px-4 py-2 bg-green-300">
-          {formatPrice(order.price)}
-        </th>
+        <tr>
+          <th colSpan={3} className="border px-4 py-2 text-right">
+            Order Total:
+          </th>
+          <th className="border px-4 py-2 bg-green-300">
+            {formatPrice(order.price)}
+          </th>
+        </tr>
       </tfoot>
     </table>
   )
